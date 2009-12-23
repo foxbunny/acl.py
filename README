@@ -190,3 +190,7 @@ method to write changes to the database. ::
    >>> user = User.get_user(username='myuser')
    >>> user.username = 'mynewuser'
    >>> user.store()
+
+You should note that even the e-mail address can be changed. It is your
+responsibility to prevent that if you don't want your users to change the
+e-mail address.
