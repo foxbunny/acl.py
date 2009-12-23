@@ -89,7 +89,13 @@ attached to it. To see whether a user has her/his session, use the
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
    >>> user.is_logged_in
-
+   False
+   >>> user.authenticate('clear-text password)
+   True
+   >>> user.is_logged_in
+   True
+   >>> web.session.username
+   'myuser'
 
 
 Resetting the password
