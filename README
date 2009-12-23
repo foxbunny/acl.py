@@ -131,7 +131,7 @@ Here's a simple example::
 
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
-   >>> user.email(message="Hi, $username!")
+   >>> user.send_email(message="Hi, $username!")
 
 As will all other e-mail facilities, you can add template variables to the
 e-mail message, but for regular e-mail, you are limited to the ``$username``
@@ -176,3 +176,17 @@ method, like some of the other methods. ::
                     Hi, $username,
                     Your account has been suspended, can you believe it?
                     """)
+
+Updating user details
+---------------------
+
+Updating properties for a user is as simple as assigning new values to them.
+Some validation occurs behind the scene (e.g, creating the encrypted version of
+the password), but most of the time you don't need to worry about that. Once
+you've assigned new properties for the user, you have to call the ``store``
+method to write changes to the database. ::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.username = 'mynewuser'
+   >>> user.store()
