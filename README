@@ -17,10 +17,8 @@ To create a user, you can use the ``User`` class from the
 specify the three required properties::
 
    >>> from authenticationpy.auth import User
-   >>> user = User()
-   >>> user.username = "myuser"
-   >>> user.password = "clear-text password"
-   >>> user.email = "user@someserver.com"
+   >>> user = User(username='myuser', password='clear-text password,
+                   email='user@someserver.com')
    >>> user.create()
 
 Creating a user with activation e-mail
@@ -38,10 +36,9 @@ activation message::
                    http://mysite.com/activate/$url
                    """)
 
-We have used the shorthand method for creating a user by specifying the
-parameters directly as arugments when creating the instance. The format of the
-activation message is arbitrary, and you can use any template you like. The
-template variables available for customizing the message dynamically are:
+The format of the activation message is arbitrary, and you can use any 
+template you like. The template variables available for customizing the 
+message dynamically are:
 
 * ``$url``: activation URL suffix that is generated automatically
 * ``$username``: username
