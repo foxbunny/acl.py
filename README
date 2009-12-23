@@ -1,0 +1,178 @@
+================================================================
+authentication.py: user authentication and management for web.py
+================================================================
+
+The goal of this project is to provide a ready-to-use microframework for
+creating and managing users, secure storage of authentication data, and
+permission management for your `web.py <http://www.webpy.org/>`_ site.
+
+User object
+===========
+
+Creating a new user
+-------------------
+
+To create a user, you can use the ``User`` class from the
+``authenticationpy.auth`` module. Before actually creating a user, you need to
+specify the three required properties::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User()
+   >>> user.username = "myuser"
+   >>> user.password = "clear-text password"
+   >>> user.email = "user@someserver.com"
+   >>> user.create()
+
+Creating a user with activation e-mail
+--------------------------------------
+
+If you want to send out an activation e-mail, you can do so by specifying the
+activation message::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User(username="myuser",
+   ...            password="clear-text password",
+   ...            email="user@someserver.com")
+   >>> user.create(message="""
+                   Please activate your account at
+                   http://mysite.com/activate/$url
+                   """)
+
+We have used the shorthand method for creating a user by specifying the
+parameters directly as arugments when creating the instance. The format of the
+activation message is arbitrary, and you can use any template you like. The
+template variables available for customizing the message dynamically are:
+
+* ``$url``: activation URL suffix that is generated automatically
+* ``$username``: username
+* ``$email``: the e-mail address used for creating the user
+* ``$password``: the clear-text password
+
+Note that the clear-text password is only stored in memory, and cannot be
+retrieved later. If you want to send activation e-mails more than once, do not
+include the password in your template. If the clear-text password is lost, the
+template variable will be replaced with an empty string.
+
+If you decide to sent an activation message, the user account will be marked as
+suspended until it is activated, and the user cannot be authenticated.
+
+Getting the user record
+-----------------------
+
+To get the user record, you can call the ``get_user`` class method::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(email="user@someserver.com")
+
+You can use either the username or the e-mail address as an argument for the
+``get_user`` method.
+
+Authenticating the user
+-----------------------
+
+To check the user password (to authenticate it), you must call the
+``authenticate`` method on the user object::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.authenticate('clear-text password')
+   True
+
+The method returns True or False depending on whether authentication was
+successful. A session is automatically created for the user. Existence of valid
+session data can be verified using the session system itself.
+
+Checking if a user is logged in
+-------------------------------
+
+Every user that has been successfully authenticated has its own session
+attached to it. To see whether a user has her/his session, use the
+``is_logged_in`` method::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.is_logged_in
+
+
+
+Resetting the password
+----------------------
+
+You can reset the user password in two ways. You can simply assign a new
+clear-text password to the password property or you can call the
+``reset_password`` method, which can optionally send out a notification or
+confirmation e-mail.
+
+Here is an example using the property method::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.password = 'new password'
+
+And the ``reset_password`` method::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.reset_password('new password', 
+                           message='Your password is now $password')
+
+The template for the ``message`` argument can contain the following variables:
+
+* ``$url``: automatically generated confirmation url suffix
+* ``$username``: username
+* ``$email``: the user's e-mail address
+* ``$password``: the new cleartext password
+
+Sending e-mails to a user
+-------------------------
+
+Arbitrary e-mail messages can be sent to users using the ``send_email`` method.
+Here's a simple example::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.email(message="Hi, $username!")
+
+As will all other e-mail facilities, you can add template variables to the
+e-mail message, but for regular e-mail, you are limited to the ``$username``
+only.
+
+Deleting a user
+---------------
+
+To delete a user (i.e, permanently remove its records), you can use the
+``delete`` method::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.delete()
+
+You can also send out a notification or confirmation e-mail::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.delete(message="""
+                   Please confirm this by clicking on this link:
+                   http://mysite.com/confirm/$url
+                   """)
+
+Available e-mail message template variables are::
+
+* ``$url``: automatically generated confirmation url suffix
+* ``$username``: username
+* ``$email``: the user's e-mail address
+
+Suspending an account
+---------------------
+
+Users account can be deleted, and it's gone forever. If you only want to
+disable authentication for a particular account, you can suspend it instead of
+deleting it. To do this, just use the ``suspend`` method. It is an e-mail
+method, like some of the other methods. ::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.suspend(message="""
+                    Hi, $username,
+                    Your account has been suspended, can you believe it?
+                    """)
