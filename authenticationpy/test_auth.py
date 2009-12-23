@@ -1,9 +1,18 @@
 import web
 import authenticationpy
+from authenticationpy import auth
+from nose.tools import *
 
 database = web.database(dbn='postgres', db='authenticationpy_test', user='postgres')
 
-def setup_package():
+invalid_usernames = (
+    '12hours', # starts with a number
+    '$mister', # starts with a special character
+    '_boogy', # another one starting with a spec char
+    '-peenutz', # yet another
+)
+
+def setup_module():
     web.config.db = database
     # create table for User object
     database.query("""
@@ -25,7 +34,14 @@ def setup_package():
                    USING btree (username);
                    """)
 
-def teardown_package():
+def teardown_module():
     database.query("""
                    DROP TABLE IF EXISTS authenticationpy_users CASCADE;
                    """)
+
+def test_username_regexp():
+    for username in invalid_usernames:
+        yield username_check, username
+
+def username_check(string):
+    assert_false(auth.username_re.match(string))
