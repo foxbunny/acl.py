@@ -12,6 +12,12 @@ invalid_usernames = (
     '-peenutz', # yet another
 )
 
+invalid_emails = (
+    # FIXME: Find more representative samples of FU'd emails
+    '@nouser.com',
+    '@double@atmark@server.com',
+)
+
 def setup_module():
     web.config.db = database
     # create table for User object
