@@ -45,6 +45,10 @@ class DuplicateUserError(UserError):
     pass
 
 
+class DuplicateEmailError(UserError):
+    pass
+
+
 class User(object):
     """ User and user management class
 
