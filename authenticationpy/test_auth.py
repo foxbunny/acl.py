@@ -152,3 +152,13 @@ def test_create_with_email_sets_act_code():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create(message='This is an activation mail')
     assert len(user._act_code) == 92
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_activation_code_in_db():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create(message='This is the activation mail')
+    record = database.select('authenticationpy_users',
+                             what='act_code',
+                             where="username = 'myuser'",
+                             limit=1)[0]
+    assert record.act_code == user._act_code
