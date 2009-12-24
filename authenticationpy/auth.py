@@ -135,7 +135,7 @@ class User(object):
     def registered_since(self):
         raise NotImplementedError
 
-    def create(self, message=None):
+    def create(self, message=None, activated=False):
         """ Stores a new user optionally gerating a password """
         # FIXME: Clean this up in a more OOP way
         if not self._new_account:
