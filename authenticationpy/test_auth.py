@@ -146,3 +146,9 @@ def test_no_activation_with_email():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create(message='This is an activation mail')
     assert_false(user.active)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_create_with_email_sets_act_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create(message='This is an activation mail')
+    assert len(user._act_code) == 92
