@@ -51,3 +51,11 @@ def test_username_regexp():
 
 def username_check(string):
     assert_false(auth.username_re.match(string))
+
+def test_email_regexp():
+    for email in invalid_emails:
+        yield email_check, email
+
+def email_check(string):
+    assert_false(auth.username_re.match(string))
+
