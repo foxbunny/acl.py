@@ -2,6 +2,7 @@ import web
 import re
 import random
 import hashlib
+import datetime
 
 db = web.config.authdb
 
@@ -30,6 +31,11 @@ def _encrypt_password(username, cleartext):
     salt = ''.join([random.choice('abcdefghijklmnopqrstuvwxyz0123456789') for i in range(16)])
     hexdigest = hashlib.sha256('%s%s%s' % (username, salt, cleartext)).hexdigest()
     return '%s$%s' % (salt, hexdigest)
+
+def _generate_interaction_code(username):
+    timestamp = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%s')
+    hexdigest = hashlib.sha256('%s%s' % (username, timestamp)).hexdigest()
+    return '%s$%s' % (timestamp, hexdigest)
 
 
 class UserError(Exception):
