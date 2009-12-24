@@ -13,9 +13,9 @@ This project is currently in heavy development. Most facilities either don't
 work, or are not even designed yet. We have scheduled the release of 0.1 with
 fully functional user management during January. Here is the brief roadmap:
 
-* v0.1 (Jan 2009): fully functional user management
-* v0.2 (Feb 2009): fully functional permissions management
-* v0.3 (Feb 2009): fully functional group management
+* v0.1 (Jan 2010): fully functional user management
+* v0.2 (Feb 2010): fully functional permissions management
+* v0.3 (Feb 2010): fully functional group management
 
 Each of the version will add one module to the project. User management is in
 the ``auth`` module, which is curretly being worked on. Permissions management
