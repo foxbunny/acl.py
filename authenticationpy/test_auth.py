@@ -158,3 +158,13 @@ def test_activation_code_in_db():
                              where="username = 'myuser'",
                              limit=1)[0]
     assert record.act_code == user._act_code
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_activation_on_create():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create(activated=True)
+    record = database.select('authenticationpy_users',
+                             what='active',
+                             where="username = 'myuser'",
+                             limit=1)[0]
+    assert record.active == True
