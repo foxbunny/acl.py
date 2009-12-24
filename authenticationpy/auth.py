@@ -41,6 +41,10 @@ class UserAccountError(Exception):
     pass
 
 
+class DuplicateUserError(UserError):
+    pass
+
+
 class User(object):
     """ User and user management class
 
