@@ -4,7 +4,24 @@ import random
 import hashlib
 import datetime
 
-db = web.config.authdb
+class ConfigurationError(Exception):
+    pass
+
+try:
+    db = web.config.authdb
+except AttributeError:
+    raise ConfigurationError('Cannot find database object in web.config.authdb')
+
+try:
+    authmail_conf = web.config.authmail
+except AttributeError:
+    authmail_conf = {}
+
+# TODO: loggin for emails
+# TODO: cc site admin on account-related events
+
+sender = auth_conf.get('sender')
+act_subject = auth_conf.get('activation_subject')
 
 TABLE = 'authenticationpy_users'
 
