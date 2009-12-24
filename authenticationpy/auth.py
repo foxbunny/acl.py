@@ -63,6 +63,7 @@ class User(object):
         object.__setattr__(self, '_pwd_code', None)
         object.__setattr__(self, '_modified', False)
         object.__setattr__(self, '_cleartext', None)
+        object.__setattr__(self, '_new_account', True)
 
     def __setattr__(self, name, value):
         if name == 'username':
