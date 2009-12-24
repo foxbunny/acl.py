@@ -140,3 +140,9 @@ def test_activation_withut_email():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create()
     assert user.active
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_no_activation_with_email():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create(message='This is an activation mail')
+    assert_false(user.active)
