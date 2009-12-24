@@ -98,3 +98,9 @@ def test_save_new_instance_has_cleartext():
     assert user._cleartext is None
     user.create()
     assert len(user._cleartext) == 8
+def test_create_database_record():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    assert len(database.select('authenticationpy_users')) == 1
+    record = database.select('authenticationpy_users')[0]
+    assert record.username == 'myuser'
