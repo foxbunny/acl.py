@@ -144,9 +144,8 @@ class User(object):
         if not self.password:
             self._cleartext = _generate_password()
             self.password = self._cleartext
-        if not message:
-            self.active = True
-        else:
+        
+        if message:
             self._act_code = _generate_interaction_code(self.username)
             msg_body = message.format(username=self.username,
                                       email=self.email,
