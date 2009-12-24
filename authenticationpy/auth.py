@@ -128,6 +128,8 @@ class User(object):
             self.password = self._cleartext
         if not message:
             self.active = True
+        else:
+            self._act_code = _generate_interaction_code(self.username)
         self.store()
 
     def store(self):
