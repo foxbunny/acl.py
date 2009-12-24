@@ -28,8 +28,7 @@ def _encrypt_password(username, cleartext):
     """ Encrypts the ``cleartext`` password and returns it """
     # TODO: maybe find a better salt generation code, or use longer salt
     salt = ''.join([random.choice('abcdefghijklmnopqrstuvwxyz0123456789') for i in range(16)])
-    sh = hashlib.sha256('%s%s%s' % (username, salt, cleartext))
-    hexdigest = sh.hexdigest()
+    hexdigest = hashlib.sha256('%s%s%s' % (username, salt, cleartext)).hexdigest()
     return '%s$%s' % (salt, hexdigest)
 
 
