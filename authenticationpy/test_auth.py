@@ -71,6 +71,7 @@ def test_create_user_bad_username():
 def create_bad_username_check(string):
     auth.User(username=string, email="valid@email.com")
 
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_create_user_bad_email():
     for e in invalid_emails:
         yield create_bad_email_check, e
@@ -79,10 +80,12 @@ def test_create_user_bad_email():
 def create_bad_email_check(string):
     auth.User(username='myuser', email=string)
 
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_new_user_instance_has_no_password():
     user = auth.User(username='myuser', email='valid@email.com')
     assert user.password is None
 
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_setting_password():
     user = auth.User(username='myuser', email='valid@email.com')
     user.password = 'abc'
