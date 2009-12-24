@@ -91,7 +91,11 @@ class User(object):
         raise NotImplementedError
 
     def create(self, message=None):
-        raise NotImplementedError
+        """ Stores a new user optionally gerating a password """
+        if not self.password:
+            self._cleartext = _generate_password()
+            self.password = self._cleartext
+        self.store()
 
     def store(self):
         raise NotImplementedError
