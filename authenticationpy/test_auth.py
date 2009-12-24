@@ -82,3 +82,8 @@ def create_bad_email_check(string):
 def test_new_user_instance_has_no_password():
     user = auth.User(username='myuser', email='valid@email.com')
     assert user.password is None
+
+def test_setting_password():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc'
+    assert len(user.password) == 81
