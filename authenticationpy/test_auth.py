@@ -61,7 +61,7 @@ def email_check(string):
 
 @raises(TypeError)
 def test_create_user_missing_args():
-    user = auth.User()
+    auth.User()
 
 def test_create_user_bad_username():
     for u in invalid_usernames:
@@ -69,6 +69,5 @@ def test_create_user_bad_username():
 
 @raises(ValueError)
 def create_bad_username_check(string):
-    print string
-    user = auth.User(username=string, email="valid@email.com")
+    auth.User(username=string, email="valid@email.com")
 
