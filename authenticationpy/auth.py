@@ -142,7 +142,8 @@ class User(object):
                               username=self.username,
                               email=self.email,
                               password=self.password,
-                              active=self.active)
+                              active=self.active,
+                              act_code=self._act_code)
                     self._new_account = False
                 else:
                     # TODO: update only fields that have been modified
