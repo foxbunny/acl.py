@@ -134,3 +134,9 @@ def test_create_duplicate_email():
     user.create()
     user = auth.User(username='otheruser', email='valid@email.com')
     user.create()
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_activation_withut_email():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    assert user.active
