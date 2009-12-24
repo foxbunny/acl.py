@@ -1,9 +1,10 @@
 import web
-import authenticationpy
-from authenticationpy import auth
 from nose.tools import *
 
 database = web.database(dbn='postgres', db='authenticationpy_test', user='postgres')
+web.config.authdb = database
+
+from authenticationpy import auth
 
 invalid_usernames = (
     '12hours', # starts with a number
@@ -19,7 +20,6 @@ invalid_emails = (
 )
 
 def setup_module():
-    web.config.db = database
     # create table for User object
     database.query("""
                    DROP TABLE IF EXISTS authenticationpy_users CASCADE;
