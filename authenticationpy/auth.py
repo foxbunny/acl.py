@@ -20,8 +20,8 @@ except AttributeError:
 # TODO: loggin for emails
 # TODO: cc site admin on account-related events
 
-sender = auth_conf.get('sender')
-act_subject = auth_conf.get('activation_subject')
+sender = authmail_conf.get('sender')
+act_subject = authmail_conf.get('activation_subject')
 
 TABLE = 'authenticationpy_users'
 
