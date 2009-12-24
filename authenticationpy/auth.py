@@ -2,9 +2,8 @@ import web
 import re
 import random
 import hashlib
-from authenticationpy import DATABASE
 
-db = DATABASE
+db = web.config.authdb
 
 TABLE = 'authenticationpy_users'
 
