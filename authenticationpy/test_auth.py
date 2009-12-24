@@ -27,10 +27,10 @@ def setup_module():
                      id               SERIAL PRIMARY KEY,
                      username         VARCHAR(40) NOT NULL UNIQUE,
                      email            VARCHAR(80) NOT NULL UNIQUE,
-                     password         VARCHAR(40) NOT NULL,
-                     act_code         VARCHAR(40),
-                     del_code         VARCHAR(40),
-                     pwd_code         VARCHAR(40), 
+                     password         CHAR(81) NOT NULL,
+                     act_code         CHAR(40),
+                     del_code         CHAR(40),
+                     pwd_code         CHAR(40), 
                      regiestered_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                      active           BOOLEAN DEFAULT 'false' 
                    );
