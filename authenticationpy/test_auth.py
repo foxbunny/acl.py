@@ -126,3 +126,11 @@ def test_create_duplicate_username():
     user.create()
     user = auth.User(username='myuser', email='other@email.com')
     user.create()
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.DuplicateEmailError)
+def test_create_duplicate_email():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User(username='otheruser', email='valid@email.com')
+    user.create()
