@@ -95,5 +95,6 @@ def test_save_new_instance_no_password():
 
 def test_save_new_instance_has_cleartext():
     user = auth.User(username='myuser', email='valid@email.com')
+    assert user._cleartext is None
     user.create()
     assert len(user._cleartext) == 8
