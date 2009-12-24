@@ -98,7 +98,13 @@ class User(object):
         self.store()
 
     def store(self):
-        raise NotImplementedError
+        """ Stores a user account """
+        if self._modified:
+            # store this account
+            pass
+        # nothing to store
+        pass
+
 
     def delete(self, message=None):
         raise NotImplementedError
