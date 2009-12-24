@@ -18,7 +18,7 @@ email_re = re.compile(
     re.IGNORECASE)
 
 
-class User():
+class User(object):
     """ User and user management class
 
     To create a new unsaved user, you have to initialize a User instance
