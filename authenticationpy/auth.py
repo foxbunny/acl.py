@@ -32,6 +32,15 @@ def _encrypt_password(username, cleartext):
     hexdigest = sh.hexdigest()
     return '%s$%s' % (salt, hexdigest)
 
+
+class UserError(Exception):
+    pass
+
+
+class UserAccountError(Exception):
+    pass
+
+
 class User(object):
     """ User and user management class
 
