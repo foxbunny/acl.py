@@ -48,6 +48,14 @@ class User(object):
         object.__setattr__(self, 'del_code', None)
         object.__setattr__(self, 'pwd_code', None)
 
+    def __setattr__(self, name, value):
+        if name == 'username':
+            if not username_re.match(value):
+                raise ValueError('Invalid username')
+
+        # no errors so far, so go ahead and assign
+        object.__setattr__(self, name, value)
+
     @property
     def is_logged_in(self):
         raise NotImplementedError
