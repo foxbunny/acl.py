@@ -8,6 +8,8 @@ db = DATABASE
 
 TABLE = 'authenticationpy_users'
 
+PASSWORD_CHARS = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ234567890'
+
 # Usernames must start with a letter, and can contain letters, numbers, dots,
 # dashes, and underscores
 username_re = re.compile(r'[A-Za-z]{1}[A-Za-z0-9.-_]{3,39}')
@@ -19,6 +21,9 @@ email_re = re.compile(
     r')@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$', # domain
     re.IGNORECASE)
 
+def _generate_password():
+    """ Generates a random 8-character string using characters from PASSWORD_CHARS """
+    return ''.join([random.choice(PASSWORD_CHARS) for i in range(8)])
 
 def _encrypt_password(username, cleartext):
     """ Encrypts the ``cleartext`` password and returns it """
