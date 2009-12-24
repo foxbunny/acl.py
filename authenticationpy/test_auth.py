@@ -71,3 +71,10 @@ def test_create_user_bad_username():
 def create_bad_username_check(string):
     auth.User(username=string, email="valid@email.com")
 
+def test_create_user_bad_email():
+    for e in invalid_emails:
+        yield create_bad_email_check, e
+
+@raises(ValueError)
+def create_bad_email_check(string):
+    auth.User(username='myuser', email=string)
