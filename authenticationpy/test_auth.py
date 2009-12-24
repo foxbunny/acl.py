@@ -19,7 +19,7 @@ invalid_emails = (
     '@double@atmark@server.com',
 )
 
-def setup_module():
+def setup_table():
     # create table for User object
     database.query("""
                    DROP TABLE IF EXISTS authenticationpy_users CASCADE;
@@ -40,7 +40,7 @@ def setup_module():
                    USING btree (username);
                    """)
 
-def teardown_module():
+def teardown_table():
     database.query("""
                    DROP TABLE IF EXISTS authenticationpy_users CASCADE;
                    """)
@@ -88,20 +88,20 @@ def test_setting_password():
     user.password = 'abc'
     assert len(user.password) == 81
 
-@with_setup(setup=setup_module, teardown=teardown_module)
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_save_new_instance_no_password():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create()
     assert len(user.password) == 81
 
-@with_setup(setup=setup_module, teardown=teardown_module)
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_save_new_instance_has_cleartext():
     user = auth.User(username='myuser', email='valid@email.com')
     assert user._cleartext is None
     user.create()
     assert len(user._cleartext) == 8
 
-@with_setup(setup=setup_module, teardown=teardown_module)
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_create_database_record():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create()
