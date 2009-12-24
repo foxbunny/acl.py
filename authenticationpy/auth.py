@@ -59,11 +59,11 @@ class User(object):
         object.__setattr__(self, 'password', None)
         object.__setattr__(self, 'registered_at', None)
         object.__setattr__(self, 'active', False)
+        object.__setattr__(self, '_act_code', None)
+        object.__setattr__(self, '_del_code', None)
+        object.__setattr__(self, '_pwd_code', None)
         object.__setattr__(self, '_modified', False)
         object.__setattr__(self, '_cleartext', None)
-        object.__setattr__(self, 'act_code', None)
-        object.__setattr__(self, 'del_code', None)
-        object.__setattr__(self, 'pwd_code', None)
 
     def __setattr__(self, name, value):
         if name == 'username':
