@@ -88,16 +88,20 @@ def test_setting_password():
     user.password = 'abc'
     assert len(user.password) == 81
 
+@with_setup(setup=setup_module, teardown=teardown_module)
 def test_save_new_instance_no_password():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create()
     assert len(user.password) == 81
 
+@with_setup(setup=setup_module, teardown=teardown_module)
 def test_save_new_instance_has_cleartext():
     user = auth.User(username='myuser', email='valid@email.com')
     assert user._cleartext is None
     user.create()
     assert len(user._cleartext) == 8
+
+@with_setup(setup=setup_module, teardown=teardown_module)
 def test_create_database_record():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create()
