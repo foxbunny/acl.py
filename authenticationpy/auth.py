@@ -202,9 +202,58 @@ class User(object):
     def reset_password(self, password, message=None):
         raise NotImplementedError
 
-    def send_email(self, message=None):
-        raise NotImplementedError
-    
+    def send_email(self, message, subject, sender=sender, **kwargs):
+        """ Send an arbitrary e-mail message to the user 
+        
+        Required argument for this method are:
+
+        * ``message``: the body of the e-mail
+        * ``subject``: e-mail's subject
+        
+        ``sender`` argument is optional, and it defaults to
+        ``web.config.authmail['sender']``, which is usually the e-mail address
+        of your site.
+
+        Optionally, you can use ``kwargs`` to set template variables. The
+        template variables follow the ``$varname`` pattern used by Python's
+        built-in string formatting facilities. Any occurence of ``$varname`` in
+        your message string will be replaced by appropriate variables you
+        specify in ``kwargs``. For example::
+
+            >>> user.send_email(message='Hi, $username!', subject='Hi',
+            ...                 username='some_user')
+            # results in a message 'Hi, some_user!'
+
+        If ``kwargs`` are omitted, the default variables are provided. Those
+        are:
+
+        * ``$sender``: the sender's e-mail address
+        * ``$username``: username of the receiving user
+        * ``$email``: e-mail address of the receiving user
+
+        If for some reason, the e-mail cannot be sent (e.g, because
+        ``sendmail`` is not available on your system of SMTP parameters are
+        incorrect, ``send_email`` will not raise any exceptions. The best way
+        to make sure ``send_email`` is working is to send yourself a message.
+
+        For information on how to set up web.py's e-mail sending facilities,
+        read the web.py API documentation on `web.utils module
+        <http://webpy.org/docs/0.3/api#web.utils>`.
+        
+        """
+        if not kwargs:
+            kwargs = {'sender': sender,
+                      'username': self.username,
+                      'email': self.email }
+        body = message.format(**kwargs)
+        try:
+            web.utils.sendmail(from_address=sender,
+                               to_address=self.email,
+                               subject=subject,
+                               message=body)
+        except OSError:
+            pass
+         
     @classmethod
     def get_user(cls, username=None, email=None):
         raise NotImplementedError
