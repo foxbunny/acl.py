@@ -21,7 +21,10 @@ except AttributeError:
 # TODO: cc site admin on account-related events
 
 sender = authmail_conf.get('sender')
-act_subject = authmail_conf.get('activation_subject')
+act_subject = authmail_conf.get('activation_subject', 'Account activation')
+rst_subject = authmail_conf.get('reset_subject', 'Password reset')
+del_subject = authmail_conf.get('delete_subject', 'Account removed')
+ssp_subject = authmail_conf.get('suspend_subject', 'Account suspended')
 
 TABLE = 'authenticationpy_users'
 
