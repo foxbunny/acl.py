@@ -37,20 +37,16 @@ class User(object):
     """
 
     def __init__(self, username, email):
-        self.username = None
-        self.password = None
-        self.email = None
-        self.registered_at = None
+        self.username = username
+        self.email = email
 
-        self.active = False
-        self.act_code = None
-        self.del_code = None
-        self.pwd_code = None
-
-        raise NotImplementedError
-
-    def __setattr__(self):
-        raise NotImplementedError
+        # These properties are set directly during __init__
+        object.__setattr__(self, 'password', None)
+        object.__setattr__(self, 'registered_at', None)
+        object.__setattr__(self, 'active', False)
+        object.__setattr__(self, 'act_code', None)
+        object.__setattr__(self, 'del_code', None)
+        object.__setattr__(self, 'pwd_code', None)
 
     @property
     def is_logged_in(self):
