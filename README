@@ -27,6 +27,41 @@ Each of the version will add one module to the project. User management is in
 the ``auth`` module, which is curretly being worked on. Permissions management
 will be pu in ``perm`` module, and groups will reside in ``group`` module.
 
+Before using authentication.py
+==============================
+
+The first thing you need to do is tell authentication.py which database it will
+be using. To do this, add ``authdb`` key to ``web.config``. Here's an example
+using PostgreSQL::
+
+   import web
+   somedb = web.database(dbn='postgres', db='my_app_db', user='postgres')
+   web.config.authdb = somedb
+
+You can also have a separate database just for authentication (e.g, if you want
+to use a common authentication database between different apps). Just assign
+wahtever database you want to use to ``web.config.authdb``.
+
+If you want to take advantage of messaging facilities, you also need to define
+a ``web.config.authmail`` key, and assign it a dictionary of options::
+
+   import web
+   web.config.authmail = {'sender': 'default.sender@yoursite.com',
+                          'activation_subject': 'Activate your account',
+                          'reset_subject': 'Your password has been reset',
+                          'delete_subject': Your account was removed',
+                          'suspend_subject': 'Your account is suspended'}
+
+Defaults for the subject messages are:
+
+* ``activation_subject``: *Account activation*
+* ``reset_subject``: *Password reset*
+* ``delete_subject``: *Account removed*
+* ``suspend_subject``: *Account suspended*
+
+If you are happy with these defaults, you don't have to include them in the
+configuration dictionary. Sender is still required.
+
 User object
 ===========
 
