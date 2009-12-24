@@ -6,6 +6,12 @@ The goal of this project is to provide a ready-to-use microframework for
 creating and managing users, secure storage of authentication data, and
 permission management for your `web.py <http://www.webpy.org/>`_ site.
 
+Dependencies
+============
+
+* web.py (obviously)
+* nose (for running tests only)
+
 Project status
 ==============
 
