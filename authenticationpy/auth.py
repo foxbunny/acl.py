@@ -10,6 +10,14 @@ TABLE = 'authenticationpy_users'
 # dashes, and underscores
 username_re = re.compile(r'[A-Za-z]{1}[A-Za-z0-9.-_]{3,39}')
 
+# regexp for e-mail address taken from Django (http://www.djangoproject.com/)
+email_re = re.compile(
+    r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"  # dot-atom
+    r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
+    r')@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$', # domain
+    re.IGNORECASE)
+
+
 class User():
     """ User and user management class
 
