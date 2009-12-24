@@ -94,6 +94,9 @@ class User(object):
             if not email_re.match(value):
                 raise ValueError('Invalid e-mail')
 
+            if db.where(TABLE, what='email', limit=1, email=value):
+                raise DuplicateEmailError("Email '%s' already exists" % value)
+
         if name == 'password':
             self._cleartext = value
             value = _encrypt_password(self.username, value)    
