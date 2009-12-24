@@ -137,6 +137,7 @@ class User(object):
 
     def create(self, message=None):
         """ Stores a new user optionally gerating a password """
+        # FIXME: Clean this up in a more OOP way
         if not self._new_account:
             raise UserAccountError('Account for %s (%s) is not new' % (self.username,
                                                                        self.email))
@@ -147,6 +148,18 @@ class User(object):
             self.active = True
         else:
             self._act_code = _generate_interaction_code(self.username)
+            msg_body = message.format(username=self.username,
+                                      email=self.email,
+                                      password=self.password,
+                                      url=self._act_code)
+            try:
+                web.utils.sendmail(from_address=sender,
+                                   to_address=self.email,
+                                   subject=act_subject,
+                                   message=msg_body)
+            except OSError:
+                pass
+
         self.store()
 
     def store(self):
