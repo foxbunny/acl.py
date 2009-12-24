@@ -6,6 +6,21 @@ The goal of this project is to provide a ready-to-use microframework for
 creating and managing users, secure storage of authentication data, and
 permission management for your `web.py <http://www.webpy.org/>`_ site.
 
+Project status
+==============
+
+This project is currently in heavy development. Most facilities either don't
+work, or are not even designed yet. We have scheduled the release of 0.1 with
+fully functional user management during January. Here is the brief roadmap:
+
+* v0.1 (Jan 2009): fully functional user management
+* v0.2 (Feb 2009): fully functional permissions management
+* v0.3 (Feb 2009): fully functional group management
+
+Each of the version will add one module to the project. User management is in
+the ``auth`` module, which is curretly being worked on. Permissions management
+will be pu in ``perm`` module, and groups will reside in ``group`` module.
+
 User object
 ===========
 
