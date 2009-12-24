@@ -53,6 +53,10 @@ class User(object):
             if not username_re.match(value):
                 raise ValueError('Invalid username')
 
+        if name == 'email':
+            if not email_re.match(value):
+                raise ValueError('Invalid e-mail')
+
         # no errors so far, so go ahead and assign
         object.__setattr__(self, name, value)
 
