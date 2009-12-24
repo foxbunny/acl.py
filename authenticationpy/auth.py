@@ -83,6 +83,9 @@ class User(object):
             if not username_re.match(value):
                 raise ValueError('Invalid username')
 
+            if db.where(TABLE, what='username', limit=1, username=value):
+                raise DuplicateUserError("Username '%s' already exists" % value)
+
         if name == 'email':
             if not email_re.match(value):
                 raise ValueError('Invalid e-mail')
