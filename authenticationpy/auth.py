@@ -188,7 +188,7 @@ class User(object):
         pass
 
     def activate(self):
-        raise NotImplementedError
+        self.active = True
 
     def delete(self, message=None):
         raise NotImplementedError
