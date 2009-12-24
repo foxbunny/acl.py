@@ -28,9 +28,9 @@ def setup_table():
                      username         VARCHAR(40) NOT NULL UNIQUE,
                      email            VARCHAR(80) NOT NULL UNIQUE,
                      password         CHAR(81) NOT NULL,
-                     act_code         CHAR(40),
-                     del_code         CHAR(40),
-                     pwd_code         CHAR(40), 
+                     act_code         CHAR(92),
+                     del_code         CHAR(92),
+                     pwd_code         CHAR(92), 
                      regiestered_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                      active           BOOLEAN DEFAULT 'false' 
                    );
