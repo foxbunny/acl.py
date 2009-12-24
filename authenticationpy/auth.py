@@ -100,8 +100,23 @@ class User(object):
     def store(self):
         """ Stores a user account """
         if self._modified:
-            # store this account
-            pass
+            transaction = db.transaction()
+            try:
+                if self._new_account:
+                    db.insert(TABLE,
+                              username=self.username,
+                              email=self.email,
+                              password=self.password,
+                              active=self.active)
+                else:
+                    # TODO: update only fields that have been modified
+                    pass
+            except:
+                transaction.rollback()
+                raise
+            else:
+                transaction.commit()
+
         # nothing to store
         pass
 
