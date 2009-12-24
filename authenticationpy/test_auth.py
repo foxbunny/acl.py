@@ -108,3 +108,10 @@ def test_create_database_record():
     assert len(database.select('authenticationpy_users')) == 1
     record = database.select('authenticationpy_users')[0]
     assert record.username == 'myuser'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.UserAccountError)
+def test_double_create_record():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user.create()
