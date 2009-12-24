@@ -1,5 +1,7 @@
 import web
 import re
+import random
+import hashlib
 from authenticationpy import DATABASE
 
 db = DATABASE
@@ -17,6 +19,14 @@ email_re = re.compile(
     r')@(?:[A-Z0-9]+(?:-*[A-Z0-9]+)*\.)+[A-Z]{2,6}$', # domain
     re.IGNORECASE)
 
+
+def _encrypt_password(username, cleartext):
+    """ Encrypts the ``cleartext`` password and returns it """
+    # TODO: maybe find a better salt generation code, or use longer salt
+    salt = ''.join([random.choice('abcdefghijklmnopqrstuvwxyz0123456789') for i in range(16)])
+    sh = hashlib.sha256('%s%s%s' % (username, salt, cleartext))
+    hexdigest = sh.hexdigest()
+    return '%s$%s' % (salt, hexdigest)
 
 class User(object):
     """ User and user management class
