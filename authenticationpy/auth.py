@@ -37,7 +37,7 @@ class UserError(Exception):
     pass
 
 
-class UserAccountError(Exception):
+class UserAccountError(UserError):
     pass
 
 
