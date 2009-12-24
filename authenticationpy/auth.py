@@ -54,6 +54,7 @@ class User(object):
         object.__setattr__(self, 'password', None)
         object.__setattr__(self, 'registered_at', None)
         object.__setattr__(self, 'active', False)
+        object.__setattr__(self, '_cleartext', None)
         object.__setattr__(self, 'act_code', None)
         object.__setattr__(self, 'del_code', None)
         object.__setattr__(self, 'pwd_code', None)
@@ -66,6 +67,10 @@ class User(object):
         if name == 'email':
             if not email_re.match(value):
                 raise ValueError('Invalid e-mail')
+
+        if name == 'password':
+            self._cleartext = value
+            value = _encrypt_password(self.username, value)    
 
         # no errors so far, so go ahead and assign
         object.__setattr__(self, name, value)
