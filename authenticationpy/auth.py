@@ -101,6 +101,9 @@ class User(object):
 
     def create(self, message=None):
         """ Stores a new user optionally gerating a password """
+        if not self._new_account:
+            raise UserAccountError('Account for %s (%s) is not new' % (self.username,
+                                                                       self.email))
         if not self.password:
             self._cleartext = _generate_password()
             self.password = self._cleartext
