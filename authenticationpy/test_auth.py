@@ -87,3 +87,8 @@ def test_setting_password():
     user = auth.User(username='myuser', email='valid@email.com')
     user.password = 'abc'
     assert len(user.password) == 81
+
+def test_save_new_instance_no_password():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    assert len(user.password) == 81
