@@ -21,6 +21,9 @@ specify the three required properties::
                    email='user@someserver.com')
    >>> user.create()
 
+A user account is not atomatically activated after creation. The ``activate``
+method must be called on the instance at some point to activate it.
+
 Creating a user with activation e-mail
 --------------------------------------
 
@@ -50,8 +53,35 @@ retrieved later. If you want to send activation e-mails more than once, do not
 include the password in your template. If the clear-text password is lost, the
 template variable will be replaced with an empty string.
 
-If you decide to sent an activation message, the user account will be marked as
-suspended until it is activated, and the user cannot be authenticated.
+Activating a user account
+-------------------------
+
+Calling ``activate`` on User instance activates it. Although it is activated
+in-memory, it is not saved as activated, so you need to store changes before a
+user can log in. ::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.activate()
+   >>> user.store()
+
+Creating a user with activation
+-------------------------------
+
+You can both create and activate a user account at the same time. To do that,
+you can pass the ``activated`` argument to the ``create`` method::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User(username='myuser',
+   ...             email='user@someserver.com')
+   >>> user.create(activated=True)
+   >>> same_user = User.get_user(username='myuser')
+   >>> same_user.active
+   True
+
+This results in a single database transaction, which is more efficient than
+calling ``create`` without ``activated`` argument, and then calling
+``activate`` explicitly.
 
 Getting the user record
 -----------------------
