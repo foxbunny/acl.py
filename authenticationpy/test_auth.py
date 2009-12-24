@@ -59,3 +59,6 @@ def test_email_regexp():
 def email_check(string):
     assert_false(auth.username_re.match(string))
 
+@raises(TypeError)
+def test_create_user_missing_args():
+    user = auth.User()
