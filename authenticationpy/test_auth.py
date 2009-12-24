@@ -3,6 +3,8 @@ from nose.tools import *
 
 database = web.database(dbn='postgres', db='authenticationpy_test', user='postgres')
 web.config.authdb = database
+web.config.authmail = {'sender': 'admin@mysite.com',
+                       'activation_subject': 'MySite.com Activation E-Mail',}
 
 from authenticationpy import auth
 
