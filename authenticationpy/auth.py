@@ -121,6 +121,8 @@ class User(object):
         if not self.password:
             self._cleartext = _generate_password()
             self.password = self._cleartext
+        if not message:
+            self.active = True
         self.store()
 
     def store(self):
