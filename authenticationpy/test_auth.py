@@ -78,3 +78,7 @@ def test_create_user_bad_email():
 @raises(ValueError)
 def create_bad_email_check(string):
     auth.User(username='myuser', email=string)
+
+def test_new_user_instance_has_no_password():
+    user = auth.User(username='myuser', email='valid@email.com')
+    assert user.password is None
