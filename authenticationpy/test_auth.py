@@ -175,3 +175,10 @@ def test_get_user_by_username():
     user.create()
     user = auth.User.get_user(username='myuser')
     assert user.email == 'valid@email.com'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_get_user_by_email():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(email='valid@email.com')
+    assert user.username == 'myuser'
