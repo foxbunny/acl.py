@@ -217,3 +217,11 @@ def test_get_user_with_combined_nonexistent_email():
     user.create()
     user = auth.User.get_user(username='myuser', email='not.me@email.com')
     assert user is None
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_authenticate():
+    password = 'abc123'
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = password
+    user.create(activated=True)
+    assert user.authenticate(password)
