@@ -168,3 +168,10 @@ def test_activation_on_create():
                              where="username = 'myuser'",
                              limit=1)[0]
     assert record.active == True
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_get_user_by_username():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    assert user.email == 'valid@email.com'
