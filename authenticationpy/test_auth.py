@@ -203,3 +203,10 @@ def test_get_nonexistent_email():
     user.create()
     user = auth.User.get_user(email='not.me@email.com')
     assert user is None
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_get_user_with_combined_nonexistent():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(username='nouser', email='valid@email.com')
+    assert user is None
