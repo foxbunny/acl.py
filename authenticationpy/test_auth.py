@@ -225,3 +225,10 @@ def test_authenticate():
     user.password = password
     user.create(activated=True)
     assert user.authenticate(password)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_authenticate_wrong_password():
+    password = 'abc123'
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create(activated=True)
+    assert_false(user.authenticate(password))
