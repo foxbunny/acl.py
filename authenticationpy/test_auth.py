@@ -33,7 +33,7 @@ def setup_table():
                      act_code         CHAR(92),
                      del_code         CHAR(92),
                      pwd_code         CHAR(92), 
-                     regiestered_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                     registered_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                      active           BOOLEAN DEFAULT 'false' 
                    );
                    CREATE UNIQUE INDEX username_index ON authenticationpy_users
