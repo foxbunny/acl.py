@@ -205,7 +205,10 @@ class User(object):
         raise NotImplementedError
 
     def authenticate(self, password):
-        raise NotImplementedError
+        salt, crypt = self.password.split('$')
+        return _password_hexdigest(self.username,
+                                   salt,
+                                   password) == crypt
 
     def reset_password(self, password, message=None):
         raise NotImplementedError
