@@ -261,6 +261,49 @@ class User(object):
          
     @classmethod
     def get_user(cls, username=None, email=None):
-        raise NotImplementedError
+        select_dict = {}
+        if username:
+            if cls._validate_username(username):
+                select_dict['username'] = username
+            else:
+                raise ValueError("'%s' does not look like a valid username" % username)
+        if email:
+            if cls._validate_email(email):
+                select_dict['email'] = email
+            else:
+                raise ValueError("'%s' does not look like a valid e-mail" % email)
+
+        if select_dict:
+            records = db.where(TABLE, **select_dict)
+            if len(records) == 1:
+                user_account = records[0]
+                
+                try:
+                    user_username = user_account.username
+                    user_email = user_account.email
+                    user_dict = {
+                        'password': user_account.password,
+                        '_act_code': user_account.act_code,
+                        '_del_code': user_account.del_code,
+                        '_pwd_code': user_account.pwd_code,
+                        'registered_at': user_account.registered_at,
+                        'active': user_account.active,
+                    }
+                except AttributeError:
+                    raise UserAccountError('Missing data for user with id %s)' % user_account.id)
+                
+                user = User(username=user_username,
+                            email=user_email)
+
+                for key in user_dict.keys():
+                    object.__setattr__(user, key, user_dict[key])
+
+                return user
+                
+            else:
+                # There is obviously nothing in there
+                return None
+        else:
+            raise UserAccountError('No user account information to look for')
 
     
