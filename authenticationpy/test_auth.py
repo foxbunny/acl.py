@@ -196,3 +196,10 @@ def test_get_nonexistent_username():
     user.create()
     user = auth.User.get_user(username='nouser')
     assert user is None
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_get_nonexistent_email():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(email='not.me@email.com')
+    assert user is None
