@@ -107,16 +107,24 @@ class User(object):
         object.__setattr__(self, '_cleartext', None)
         object.__setattr__(self, '_new_account', True)
 
+    @classmethod
+    def _validate_username(cls, username):
+        return username_re.match(username)
+
+    @classmethod
+    def _validate_email(cls, email):
+        return email_re.match(email)
+
     def __setattr__(self, name, value):
         if name == 'username':
-            if not username_re.match(value):
+            if not self._validate_username(value):
                 raise ValueError('Invalid username')
 
             if db.where(TABLE, what='username', limit=1, username=value):
                 raise DuplicateUserError("Username '%s' already exists" % value)
 
         if name == 'email':
-            if not email_re.match(value):
+            if not self._validate_email(value):
                 raise ValueError('Invalid e-mail')
 
             if db.where(TABLE, what='email', limit=1, email=value):
