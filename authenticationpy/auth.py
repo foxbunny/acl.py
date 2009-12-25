@@ -120,15 +120,9 @@ class User(object):
             if not self._validate_username(value):
                 raise ValueError('Invalid username')
 
-            if db.where(TABLE, what='username', limit=1, username=value):
-                raise DuplicateUserError("Username '%s' already exists" % value)
-
         if name == 'email':
             if not self._validate_email(value):
                 raise ValueError('Invalid e-mail')
-
-            if db.where(TABLE, what='email', limit=1, email=value):
-                raise DuplicateEmailError("Email '%s' already exists" % value)
 
         if name == 'password':
             self._cleartext = value
@@ -148,6 +142,13 @@ class User(object):
 
     def create(self, message=None, activated=False):
         """ Stores a new user optionally gerating a password """
+
+        if db.where(TABLE, what='username', limit=1, username=self.username):
+            raise DuplicateUserError("Username '%s' already exists" % self.username)
+
+        if db.where(TABLE, what='email', limit=1, email=self.email):
+            raise DuplicateEmailError("Email '%s' already exists" % self.email)
+
         if not self._new_account:
             raise UserAccountError('Account for %s (%s) is not new' % (self.username,
                                                                        self.email))
