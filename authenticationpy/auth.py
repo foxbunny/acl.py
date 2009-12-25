@@ -45,11 +45,14 @@ def _generate_password():
     """ Generates a random 8-character string using characters from PASSWORD_CHARS """
     return ''.join([random.choice(PASSWORD_CHARS) for i in range(8)])
 
+def _password_hexdigest(username, salt, password):
+    return hashlib.sha256('%s%s%s' % (username, salt, password)).hexdigest()
+
 def _encrypt_password(username, cleartext):
     """ Encrypts the ``cleartext`` password and returns it """
     # TODO: maybe find a better salt generation code, or use longer salt
     salt = ''.join([random.choice('abcdefghijklmnopqrstuvwxyz0123456789') for i in range(16)])
-    hexdigest = hashlib.sha256('%s%s%s' % (username, salt, cleartext)).hexdigest()
+    hexdigest = _password_hexdigest(username, salt, cleartext) 
     return '%s$%s' % (salt, hexdigest)
 
 def _generate_interaction_code(username):
