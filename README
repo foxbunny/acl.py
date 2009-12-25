@@ -162,27 +162,9 @@ To check the user password (to authenticate it), you must call the
    True
 
 The method returns True or False depending on whether authentication was
-successful. A session is automatically created for the user. Existence of valid
-session data can be verified using the session system itself.
-
-Checking if a user is logged in
--------------------------------
-
-Every user that has been successfully authenticated has its own session
-attached to it. To see whether a user has her/his session, use the
-``is_logged_in`` method::
-
-   >>> from authenticationpy.auth import User
-   >>> user = User.get_user(username='myuser')
-   >>> user.is_logged_in
-   False
-   >>> user.authenticate('clear-text password)
-   True
-   >>> user.is_logged_in
-   True
-   >>> web.session.username
-   'myuser'
-
+successful. Note that due to web.py's session handling, authentication.py will
+*not* automatically assign users to a session. It is your responsibility to do
+so.
 
 Resetting the password
 ----------------------
