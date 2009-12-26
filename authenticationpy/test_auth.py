@@ -259,3 +259,14 @@ def test_dirty_fields_list_on_modification():
     user = auth.User.get_user(username='myuser')
     user.email = 'another@email.com'
     assert user._dirty_fields == ['email']
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_data_to_store():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    user.username = 'otheruser'
+    user.email = 'another@email.com'
+    assert user._data_to_store == {'username': 'otheruser', 
+                                   'email': 'another@email.com'}
+
