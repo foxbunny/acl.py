@@ -205,6 +205,7 @@ class User(object):
         raise NotImplementedError
 
     def authenticate(self, password):
+        """ Test ``password`` and return boolean success status """
         salt, crypt = self.password.split('$')
         return _password_hexdigest(self.username,
                                    salt,
