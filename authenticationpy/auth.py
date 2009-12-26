@@ -229,6 +229,14 @@ class User(object):
         # nothing to store
         pass
 
+    @property
+    def _data_to_store(self):
+        """ Returns a dictionary of dirty field names and values """
+        store_dict = {}
+        for field in self._dirty_fields:
+            store_dict[field] = self.__dict__[field]
+        return store_dict
+
     def activate(self):
         self.active = True
 
