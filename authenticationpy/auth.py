@@ -96,9 +96,6 @@ class User(object):
     """
 
     def __init__(self, username, email):
-        self.username = username
-        self.email = email
-
         # These properties are set directly during __init__
         object.__setattr__(self, 'password', None)
         object.__setattr__(self, 'registered_at', None)
@@ -109,7 +106,12 @@ class User(object):
         object.__setattr__(self, '_modified', False)
         object.__setattr__(self, '_cleartext', None)
         object.__setattr__(self, '_new_account', True)
+        object.__setattr__(self, 'dirty_fields', [])
+        
+        self.username = username
+        self.email = email
 
+       
     @classmethod
     def _validate_username(cls, username):
         return username_re.match(username)
