@@ -105,7 +105,6 @@ class User(object):
         object.__setattr__(self, '_pwd_code', None)
         object.__setattr__(self, '_modified', False)
         object.__setattr__(self, '_cleartext', None)
-        object.__setattr__(self, '_new_account', True)
         object.__setattr__(self, '_dirty_fields', [])
         
         self.username = username
@@ -216,7 +215,6 @@ class User(object):
                     if self._act_code:
                         insert_dict['act_code'] = self._act_code
                     db.insert(TABLE, **insert_dict)
-                    self._new_account = False
                 else:
                     # TODO: update only fields that have been modified
                     pass
@@ -357,7 +355,6 @@ class User(object):
                 '_pwd_code': user_account.pwd_code,
                 'registered_at': user_account.registered_at,
                 'active': user_account.active,
-                '_new_account': False,
             }
         except AttributeError:
             raise UserAccountError('Missing data for user with id %s)' % user_account.id)
