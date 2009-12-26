@@ -133,6 +133,10 @@ class User(object):
             self._cleartext = value
             value = _encrypt_password(self.username, value)    
 
+        if name in ['username', 'email', 'password', 'active', '_act_code',
+                    '_del_code', '_pwd_code']:
+            self.dirty_fields.append(name)
+
         # no errors so far, so go ahead and assign
         object.__setattr__(self, '_modified', True)
         object.__setattr__(self, name, value)
