@@ -111,6 +111,8 @@ class User(object):
         self.username = username
         self.email = email
 
+        # Reset ``dirty_fields`` so it's empty after initialization
+        object.__setattr__(self, 'dirty_fields', [])
        
     @classmethod
     def _validate_username(cls, username):
