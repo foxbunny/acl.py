@@ -209,13 +209,7 @@ class User(object):
             transaction = db.transaction()
             try:
                 if self._new_account:
-                    insert_dict = {'username': self.username,
-                                   'email': self.email,
-                                   'password': self.password,
-                                   'active': self.active}
-                    if self._act_code:
-                        insert_dict['act_code'] = self._act_code
-                    db.insert(TABLE, **insert_dict)
+                    db.insert(TABLE, **self._data_to_insert)
                 else:
                     # TODO: update only fields that have been modified
                     pass
