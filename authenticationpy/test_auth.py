@@ -287,3 +287,16 @@ def test_store_modifications():
     user.store()
     user = auth.User.get_user(email='valid@email.com')
     assert user.username == 'otheruser'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_change_password():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc123'
+    user.create(activated=True)
+    user = auth.User.get_user(username='myuser')
+    user.authenticate('abc123')
+    user.password = '123abc'
+    user.store()
+    user = auth.User.get_user(username='myuser')
+    assert user.authenticate('123abc')
+    
