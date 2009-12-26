@@ -308,6 +308,13 @@ def test_change_password_with_short_password():
     user.password = 'a'
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+@raises(ValueError)
+def test_change_password_with_blank_password():
+    auth.min_pwd_length = 0
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = ''
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_reset_password():
     user = auth.User(username='myuser', email='valid@email.com')
     user.password = 'abc123'
