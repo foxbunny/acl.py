@@ -241,6 +241,14 @@ def test_authenticate_wrong_password():
     assert_false(user.authenticate(password))
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.UserAccountError)
+def test_authenticate_inactive_account():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc123'
+    user.create()
+    user.authenticate('abc123')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_user_has_dirty_fields_property():
     user = auth.User(username='myuser', email='valid@email.com')
     assert user._dirty_fields == []
@@ -279,4 +287,3 @@ def test_store_modifications():
     user.store()
     user = auth.User.get_user(email='valid@email.com')
     assert user.username == 'otheruser'
-
