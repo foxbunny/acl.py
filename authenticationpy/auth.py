@@ -1,8 +1,9 @@
-import web
 import re
 import random
 import hashlib
 import datetime
+
+import web
 
 class ConfigurationError(Exception):
     pass
