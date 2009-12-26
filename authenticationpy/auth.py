@@ -303,6 +303,12 @@ class User(object):
                                message=body)
         except OSError:
             pass
+
+    @property
+    def _new_account(self):
+        if self._account_id:
+            return False
+        return True
          
     @classmethod
     def get_user(cls, username=None, email=None):
