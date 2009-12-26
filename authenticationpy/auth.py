@@ -267,6 +267,26 @@ class User(object):
          
     @classmethod
     def get_user(cls, username=None, email=None):
+        """ Get user from the database and return ``User`` instance
+
+        Finds a user account that matches either or both of the optional
+        arguments:
+
+        * ``username``: username of the account
+        * ``email``: user's e-mail address
+
+        If neither of the arguments are supplied, ``UserAccountError`` is
+        raised. If no match is found, ``None`` is returned.
+
+        Returned accounts always have ``_new_account`` property set to False,
+        but this is meant for internal use only. Nevertheless, if you need to
+        know if the account is a new (unsaved) one, you can access this
+        property.
+
+        A successful query returns a ``User`` instance.
+
+        """
+
         select_dict = {}
         if username:
             if cls._validate_username(username):
