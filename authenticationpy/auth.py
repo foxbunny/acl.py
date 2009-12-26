@@ -269,7 +269,22 @@ class User(object):
                                    password) == crypt
 
     def reset_password(self, password, message=None):
-        raise NotImplementedError
+        """ Resets the user password 
+        
+        ``password`` argument is required and it is the new user password to be
+        saved. If you specify the ``message``, an e-mail is sent to the user's
+        e-mail address. The ``message`` is a string, and it may contain
+        template variables in ``$varname`` form. Following variables are
+        available:
+
+        * ``$username``: username of the user to be created
+        * ``$email``: user's e-mail address
+        * ``$password``: user's clear text password
+        * ``$url``: confirmation url
+
+        """
+        self.password = password
+        self.store()
 
     def send_email(self, message, subject, sender=sender, **kwargs):
         """ Send an arbitrary e-mail message to the user 
