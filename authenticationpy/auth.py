@@ -144,7 +144,30 @@ class User(object):
         raise NotImplementedError
 
     def create(self, message=None, activated=False):
-        """ Stores a new user optionally gerating a password """
+        """ Stores a new user optionally gerating a password 
+        
+        This method fails with ``UserAccountError`` if the ``User`` instance is
+        marked as an existing account.
+
+        If ``message`` argument is passed, it is treated as a e-mail message,
+        and is automatically sent to user's e-mail address. The message can
+        contain template variables (in ``$varname`` form). The variables can
+        be one or more of the following:
+
+        * ``$username``: username of the user to be created
+        * ``$email``: user's e-mail address
+        * ``$password``: user's clear text password
+        * ``$usr``: activation URL
+
+        Activation URL is generated only when a ``message`` argument is passed,
+        and stored in database.
+
+        If ``activated`` argument is set to True, the user account will be
+        activated upon creation. Otherwise, it is *not* activated, which is the
+        default. Note that an unactivated account can be always activated
+        later.
+        
+        """
 
         if db.where(TABLE, what='username', limit=1, username=self.username):
             raise DuplicateUserError("Username '%s' already exists" % self.username)
