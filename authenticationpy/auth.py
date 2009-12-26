@@ -105,6 +105,7 @@ class User(object):
         object.__setattr__(self, '_pwd_code', None)
         object.__setattr__(self, '_modified', False)
         object.__setattr__(self, '_cleartext', None)
+        object.__setattr__(self, '_account_id', None)
         object.__setattr__(self, '_dirty_fields', [])
         
         self.username = username
@@ -349,6 +350,7 @@ class User(object):
             user_username = user_account.username
             user_email = user_account.email
             user_dict = {
+                '_account_id': user_account.id,
                 'password': user_account.password,
                 '_act_code': user_account.act_code,
                 '_del_code': user_account.del_code,
