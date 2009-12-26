@@ -321,15 +321,13 @@ class User(object):
 
         select_dict = {}
         if username:
-            if cls._validate_username(username):
-                select_dict['username'] = username
-            else:
+            if not cls._validate_username(username):
                 raise ValueError("'%s' does not look like a valid username" % username)
+            select_dict['username'] = username
         if email:
-            if cls._validate_email(email):
-                select_dict['email'] = email
-            else:
+            if not cls._validate_email(email):
                 raise ValueError("'%s' does not look like a valid e-mail" % email)
+            select_dict['email'] = email
 
         if not select_dict:
             raise UserAccountError('No user account information to look for')
