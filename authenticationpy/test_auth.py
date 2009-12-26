@@ -270,3 +270,13 @@ def test_data_to_store():
     assert user._data_to_store == {'username': 'otheruser', 
                                    'email': 'another@email.com'}
 
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_store_modifications():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    user.username = 'otheruser'
+    user.store()
+    user = auth.User.get_user(email='valid@email.com')
+    assert user.username == 'otheruser'
+
