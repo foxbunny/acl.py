@@ -211,8 +211,9 @@ class User(object):
                 if self._new_account:
                     db.insert(TABLE, **self._data_to_insert)
                 else:
-                    # TODO: update only fields that have been modified
-                    pass
+                    db.update(TABLE, where='id = $id',
+                              vars={'id': self._account_id},
+                              **self._data_to_store)
             except:
                 transaction.rollback()
                 raise
