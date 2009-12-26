@@ -27,6 +27,12 @@ rst_subject = authmail_conf.get('reset_subject', 'Password reset')
 del_subject = authmail_conf.get('delete_subject', 'Account removed')
 ssp_subject = authmail_conf.get('suspend_subject', 'Account suspended')
 
+# minimum password length
+try:
+    min_pwd_length = web.config.min_pwd_length
+except:
+    min_pwd_length = 4
+
 TABLE = 'authenticationpy_users'
 
 PASSWORD_CHARS = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ234567890'
