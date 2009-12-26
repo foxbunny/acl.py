@@ -251,6 +251,8 @@ class User(object):
 
     def authenticate(self, password):
         """ Test ``password`` and return boolean success status """
+        if not self.active:
+            raise UserAccountError('Cannot authenticate inactive account')
         salt, crypt = self.password.split('$')
         return _password_hexdigest(self.username,
                                    salt,
