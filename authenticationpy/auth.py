@@ -139,6 +139,8 @@ class User(object):
                 raise ValueError('Invalid e-mail')
 
         if name == 'password':
+            if len(value) < min_pwd_length:
+                raise ValueError('Passwords cannot be shorter than %s characters.' % min_pwd_length)
             self._cleartext = value
             value = _encrypt_password(self.username, value)    
 
