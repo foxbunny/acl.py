@@ -239,3 +239,8 @@ def test_authenticate_wrong_password():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create(activated=True)
     assert_false(user.authenticate(password))
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_modify_user_has_dirty_fields_property():
+    user = auth.User(username='myuser', email='valid@email.com')
+    assert user.dirty_fields == ['username', 'email']
