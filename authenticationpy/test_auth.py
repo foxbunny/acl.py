@@ -90,7 +90,7 @@ def test_new_user_instance_has_no_password():
 @with_setup(setup=setup_table, teardown=teardown_table)
 def test_setting_password():
     user = auth.User(username='myuser', email='valid@email.com')
-    user.password = 'abc'
+    user.password = 'abc123'
     assert len(user.password) == 81
 
 @with_setup(setup=setup_table, teardown=teardown_table)
