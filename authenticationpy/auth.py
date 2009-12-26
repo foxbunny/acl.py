@@ -106,13 +106,13 @@ class User(object):
         object.__setattr__(self, '_modified', False)
         object.__setattr__(self, '_cleartext', None)
         object.__setattr__(self, '_new_account', True)
-        object.__setattr__(self, 'dirty_fields', [])
+        object.__setattr__(self, '_dirty_fields', [])
         
         self.username = username
         self.email = email
 
-        # Reset ``dirty_fields`` so it's empty after initialization
-        object.__setattr__(self, 'dirty_fields', [])
+        # Reset ``_dirty_fields`` so it's empty after initialization
+        object.__setattr__(self, '_dirty_fields', [])
        
     @classmethod
     def _validate_username(cls, username):
@@ -137,7 +137,7 @@ class User(object):
 
         if name in ['username', 'email', 'password', 'active', '_act_code',
                     '_del_code', '_pwd_code']:
-            self.dirty_fields.append(name)
+            self._dirty_fields.append(name)
 
         # no errors so far, so go ahead and assign
         object.__setattr__(self, '_modified', True)
