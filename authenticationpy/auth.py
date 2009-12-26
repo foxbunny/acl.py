@@ -229,6 +229,17 @@ class User(object):
         pass
 
     @property
+    def _data_to_insert(self):
+        """ Returns a dictionary of data to insert """
+        insert_dict = {'username': self.username,
+                       'email': self.email,
+                       'password': self.password,
+                       'active': self.active}
+        if self._act_code:
+            insert_dict['act_code'] = self._act_code
+        return insert_dict
+
+    @property
     def _data_to_store(self):
         """ Returns a dictionary of dirty field names and values """
         store_dict = {}
