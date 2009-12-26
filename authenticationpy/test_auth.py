@@ -219,6 +219,13 @@ def test_get_user_with_combined_nonexistent_email():
     assert user is None
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_existing_user_has_no_new_account_flag():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    assert user._new_account == False
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_authenticate():
     password = 'abc123'
     user = auth.User(username='myuser', email='valid@email.com')
