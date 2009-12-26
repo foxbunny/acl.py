@@ -179,6 +179,7 @@ Here is an example using the property method::
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
    >>> user.password = 'new password'
+   >>> user.store()
 
 And the ``reset_password`` method::
 
