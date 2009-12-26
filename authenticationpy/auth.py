@@ -294,6 +294,7 @@ class User(object):
                         '_pwd_code': user_account.pwd_code,
                         'registered_at': user_account.registered_at,
                         'active': user_account.active,
+                        '_new_account': False,
                     }
                 except AttributeError:
                     raise UserAccountError('Missing data for user with id %s)' % user_account.id)
