@@ -251,3 +251,11 @@ def test_dirty_fields_empty_after_get_user():
     user.create()
     user = auth.User.get_user(username='myuser')
     assert user.dirty_fields == []
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_dirty_fields_list_on_modification():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    user.email = 'another@email.com'
+    assert user.dirty_fields == ['email']
