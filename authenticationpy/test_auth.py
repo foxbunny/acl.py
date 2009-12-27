@@ -30,6 +30,7 @@ def setup_table():
                      username         VARCHAR(40) NOT NULL UNIQUE,
                      email            VARCHAR(80) NOT NULL UNIQUE,
                      password         CHAR(81) NOT NULL,
+                     pending_pwd      CHAR(81),
                      act_code         CHAR(92),
                      del_code         CHAR(92),
                      pwd_code         CHAR(92), 
