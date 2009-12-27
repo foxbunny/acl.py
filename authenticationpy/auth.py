@@ -114,6 +114,7 @@ class User(object):
         object.__setattr__(self, '_cleartext', None)
         object.__setattr__(self, '_account_id', None)
         object.__setattr__(self, '_dirty_fields', [])
+        object.__setattr__(self, '_pending_pwd', None)
         
         self.username = username
         self.email = email
