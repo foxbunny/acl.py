@@ -139,7 +139,7 @@ class User(object):
             if not self._validate_email(value):
                 raise ValueError('Invalid e-mail')
 
-        if name == 'password':
+        if name in ['password', '_pending_pwd']:
             if not value:
                 raise ValueError('Passwords cannot be blank')
             if len(value) < min_pwd_length:
