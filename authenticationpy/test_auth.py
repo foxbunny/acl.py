@@ -270,6 +270,14 @@ def test_dirty_fields_list_on_modification():
     assert user._dirty_fields == [('email', 'email')]
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_dirty_fields_with_private_properties():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    user._act_code = auth._generate_interaction_code(user.username)
+    assert user._dirty_fields == [('_act_code', 'act_code')]
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_data_to_store():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create()
