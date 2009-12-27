@@ -272,7 +272,7 @@ class User(object):
                                    salt,
                                    password) == crypt
 
-    def reset_password(self, password, message=None):
+    def reset_password(self, password=None, message=None, confirmation=False):
         """ Resets the user password 
         
         ``password`` argument is optional and it is the new user password to be
@@ -293,7 +293,23 @@ class User(object):
         later by using the ``confirm_set_pwd`` method.
 
         """
-        self.password = password
+
+        if not password:
+            password = _generate_password()
+
+        if confirmation:
+            self._pending_pwd = password
+        else:
+            self.password = password
+
+        if message:
+            self.send_email(message=message,
+                            subject=rst_subject,
+                            username=self.username,
+                            email=self.email,
+                            password=self._cleartext,
+                            url=self._act_code)
+
         self.store()
 
     def send_email(self, message, subject, sender=sender, **kwargs):
