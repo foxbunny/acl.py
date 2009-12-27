@@ -214,7 +214,7 @@ class User(object):
                             subject=act_subject,
                             username=self.username,
                             email=self.email,
-                            password=self.password,
+                            password=self._cleartext,
                             url=self._act_code)
         self.store()
 
