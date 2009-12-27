@@ -287,6 +287,11 @@ class User(object):
         * ``$password``: user's clear text password
         * ``$url``: confirmation url
 
+        Optional argument ``confirmation`` can be used to disable setting the
+        password. When ``confirmation`` is set to ``True`` actual password is
+        not set. It is hashed and stored in a separate column, and can be set
+        later by using the ``confirm_set_pwd`` method.
+
         """
         self.password = password
         self.store()
