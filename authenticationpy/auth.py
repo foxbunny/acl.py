@@ -275,11 +275,12 @@ class User(object):
     def reset_password(self, password, message=None):
         """ Resets the user password 
         
-        ``password`` argument is required and it is the new user password to be
-        saved. If you specify the ``message``, an e-mail is sent to the user's
-        e-mail address. The ``message`` is a string, and it may contain
-        template variables in ``$varname`` form. Following variables are
-        available:
+        ``password`` argument is optional and it is the new user password to be
+        saved. If no password is supplied, a random password will be generated.
+        
+        If you specify the ``message``, an e-mail is sent to the user's e-mail
+        address. The ``message`` is a string, and it may contain template
+        variables in ``$varname`` form. Following variables are available:
 
         * ``$username``: username of the user to be created
         * ``$email``: user's e-mail address
