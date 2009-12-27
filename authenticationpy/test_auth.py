@@ -332,3 +332,14 @@ def test_reset_password():
     user.reset_password('123abc')
     user = auth.User.get_user(username='myuser')
     assert user.authenticate('123abc')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_reset_password_with_random_pwd():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create(activated=True)
+    user = auth.User.get_user(username='myuser')
+    user.reset_password()
+    password = user._cleartext
+    user = auth.User.get_user(username='myuser')
+    assert user.authenticate(password)
+
