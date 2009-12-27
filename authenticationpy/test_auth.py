@@ -343,3 +343,24 @@ def test_reset_password_with_random_pwd():
     user = auth.User.get_user(username='myuser')
     assert user.authenticate(password)
 
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_reset_password_with_confirmation():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc123'
+    user.create(activated=True)
+    user = auth.User.get_user(username='myuser')
+    user.reset_password('123abc', 
+                        message='Please visit http://mysite.com/confirm/$url',
+                        confirmation=True)
+    assert len(user._pending_pwd) == 81
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_reset_password_old_pwd_still_valid():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc123'
+    user.create(activated=True)
+    user = auth.User.get_user(username='myuser')
+    user.reset_password('123abc', 
+                        message='Please visit http://mysite.com/confirm/$url',
+                        confirmation=True)
+    assert user.authenticate('abc123')
