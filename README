@@ -166,6 +166,17 @@ successful. Note that due to web.py's session handling, authentication.py will
 *not* automatically assign users to a session. It is your responsibility to do
 so.
 
+Password length constraints
+---------------------------
+
+Default password minimum length is 4 characters. If you want your users to use
+a longer minimum length password (or shorter), you can customize the minimum
+length by setting ``web.config.min_pwd_length`` configuration variable. In case
+the password you are trying to set is shorter than minimum length,
+``ValueError`` is raised. The same exception is raised when password is
+0-length. Even if you set ``web.config.min_pwd_length`` to 0, 0-length
+passwords are not allowed. The absolute minimum allowed password length is 1.
+
 Resetting the password
 ----------------------
 
