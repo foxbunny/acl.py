@@ -418,6 +418,7 @@ class User(object):
             user_dict = {
                 '_account_id': user_account.id,
                 'password': user_account.password,
+                '_pending_pwd': user_account.pending_pwd,
                 '_act_code': user_account.act_code,
                 '_del_code': user_account.del_code,
                 '_pwd_code': user_account.pwd_code,
