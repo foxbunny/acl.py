@@ -147,9 +147,12 @@ class User(object):
             self._cleartext = value
             value = _encrypt_password(self.username, value)    
 
-        if name in ['username', 'email', 'password', 'active', '_act_code',
-                    '_del_code', '_pwd_code']:
-            self._dirty_fields.append(name)
+        # store tuples of property name and column name for dirty fields
+        if name in ['username', 'email', 'password', 'active']:
+            self._dirty_fields.append((name, name))
+
+        if name in ['_act_code', '_del_code', '_pwd_code', '_pending_pwd']:
+            self._dirty_fields.append((name, name[1:]))
 
         # no errors so far, so go ahead and assign
         object.__setattr__(self, '_modified', True)
@@ -251,7 +254,7 @@ class User(object):
         """ Returns a dictionary of dirty field names and values """
         store_dict = {}
         for field in self._dirty_fields:
-            store_dict[field] = self.__dict__[field]
+            store_dict[field[1]] = self.__dict__[field[0]]
         return store_dict
 
     def activate(self):
