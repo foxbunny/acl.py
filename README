@@ -240,20 +240,22 @@ Deleting a user
 ---------------
 
 To delete a user (i.e, permanently remove its records), you can use the
-``delete`` method::
+``delete`` class method::
 
    >>> from authenticationpy.auth import User
-   >>> user = User.get_user(username='myuser')
-   >>> user.delete()
+   >>> User.delete(username='myuser')
 
 You can also send out a notification or confirmation e-mail::
 
    >>> from authenticationpy.auth import User
-   >>> user = User.get_user(username='myuser')
-   >>> user.delete(message="""
-                   Please confirm this by clicking on this link:
-                   http://mysite.com/confirm/$url
-                   """)
+   >>> User.delete(username='myuser',
+   ...             message="""
+   ...             Please confirm this by clicking on this link:
+   ...             http://mysite.com/confirm/$url
+   ...             """)
+
+If you decide to send a confirmation e-mail, the user account is not removed
+until its removal is confirmed by ``confirm_delete`` class method.
 
 Available e-mail message template variables are::
 
