@@ -263,6 +263,16 @@ Available e-mail message template variables are::
 * ``$username``: username
 * ``$email``: the user's e-mail address
 
+Confirming user account removal
+-------------------------------
+
+If you have used the confirmation e-mail functionality when deleting a user
+account, you need to explcitly confirm account removal. You can do that by
+using the ``confirm_delete`` class method::
+
+   >>> from authenticationpy.auth import User
+   >>> User.confirm_delete(username='myuser')
+
 Suspending an account
 ---------------------
 
