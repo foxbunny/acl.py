@@ -312,6 +312,13 @@ class User(object):
 
         self.store()
 
+    def confirm_reset(self):
+        """ Assign pending password as new """
+        object.__setattr__(self, 'password', self._pending_pwd)
+        object.__setattr__(self, '_pending_pwd', None)
+        self._dirty_fields.extend([('password', 'password'), 
+                                   ('_pending_pwd', 'pending_pwd')])
+
     def send_email(self, message, subject, sender=sender, **kwargs):
         """ Send an arbitrary e-mail message to the user 
         
