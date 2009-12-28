@@ -377,3 +377,18 @@ def test_confirm_reset():
     user = auth.User.get_user(username='myuser')
     user.confirm_reset()
     assert user.authenticate('123abc')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_confirm_reset_with_storing():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc123'
+    user.create(activated=True)
+    user = auth.User.get_user(username='myuser')
+    user.reset_password('123abc', 
+                        message='Please visit http://mysite.com/confirm/$url',
+                        confirmation=True)
+    user = auth.User.get_user(username='myuser')
+    user.confirm_reset()
+    user.store()
+    user = auth.User.get_user(username='myuser')
+    assert user.authenticate('123abc')
