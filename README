@@ -278,15 +278,21 @@ Suspending an account
 
 Users account can be deleted, and it's gone forever. If you only want to
 disable authentication for a particular account, you can suspend it instead of
-deleting it. To do this, just use the ``suspend`` method. It is an e-mail
+deleting it. To do this, just use the ``suspend`` class method. It is an e-mail
 method, like some of the other methods. ::
 
    >>> from authenticationpy.auth import User
-   >>> user = User.get_user(username='myuser')
-   >>> user.suspend(message="""
-                    Hi, $username,
-                    Your account has been suspended, can you believe it?
-                    """)
+   >>> User.suspend(username='myuser',
+   ...              message="""
+   ...              Hi, $username,
+   ...              Your account has been suspended, can you believe it?
+   ...              """)
+
+Unlike other e-mail methods, ``suspend`` doesn't require any confirmation, so
+the only available template variables are:
+
+* ``$username``: account username
+* ``$email``: user's e-mail address
 
 Updating user details
 ---------------------
