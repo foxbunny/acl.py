@@ -364,3 +364,16 @@ def test_reset_password_old_pwd_still_valid():
                         message='Please visit http://mysite.com/confirm/$url',
                         confirmation=True)
     assert user.authenticate('abc123')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_confirm_reset():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc123'
+    user.create(activated=True)
+    user = auth.User.get_user(username='myuser')
+    user.reset_password('123abc', 
+                        message='Please visit http://mysite.com/confirm/$url',
+                        confirmation=True)
+    user = auth.User.get_user(username='myuser')
+    user.confirm_reset()
+    assert user.authenticate('123abc')
