@@ -206,6 +206,22 @@ The template for the ``message`` argument can contain the following variables:
 * ``$email``: the user's e-mail address
 * ``$password``: the new cleartext password
 
+Confirming password resets
+--------------------------
+
+If you have decided to delay confirmation and send out a confirmation e-mail
+when using ``password_reset`` method, you need to explicitly assign the new
+password. The pending password (password that is still not confirmed) is stored
+in encrypted form in the database. In order to assign that password as the new
+password, you can call ``confirm_password``.
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.confirm_password()
+   >>> user.store()
+
+As you can see, you have to call ``store`` to make the changes permanent.
+
 Sending e-mails to a user
 -------------------------
 
