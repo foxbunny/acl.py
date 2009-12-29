@@ -434,6 +434,9 @@ class User(object):
 
         """
 
+        if username is None and email is None:
+            raise UserAccountError('No user account information to look for')
+
         select_dict = {}
         if username:
             if not cls._validate_username(username):
@@ -443,9 +446,6 @@ class User(object):
             if not cls._validate_email(email):
                 raise ValueError("'%s' does not look like a valid e-mail" % email)
             select_dict['email'] = email
-
-        if not select_dict:
-            raise UserAccountError('No user account information to look for')
         
         records = db.where(TABLE, **select_dict)
 
