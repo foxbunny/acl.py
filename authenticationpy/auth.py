@@ -214,13 +214,13 @@ class User(object):
             self.activate()
         
         if message:
-            self._act_code = _generate_interaction_code(self.username)
+            self._act_code, act_code = _generate_interaction_code(self.username)
             self.send_email(message=message,
                             subject=act_subject,
                             username=self.username,
                             email=self.email,
                             password=self._cleartext,
-                            url=self._act_code)
+                            url=act_code)
         self.store()
 
     def store(self):
