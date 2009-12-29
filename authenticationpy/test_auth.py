@@ -448,3 +448,13 @@ def test_delete_user_with_notification():
                      message='Click http://mysite.com/delete/$url to confirm',
                      confirmation=False)
     assert not auth.User.get_user(username='myuser')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.UserAccountError)
+def test_suspend_account():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc123'
+    user.create(activated=True)
+    auth.User.suspend(username='myuser')
+    user = auth.User.get_user(username='myuser')
+    user.authenticate('abc123')
