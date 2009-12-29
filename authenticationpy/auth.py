@@ -434,6 +434,23 @@ class User(object):
 
     @classmethod
     def suspend(cls, username=None, email=None, message=None):
+        """ Suspend a user account
+
+        Required arguments are ``username`` and ``email``. If either is
+        missing, ``UserAccountError`` will be raised.
+
+        If you specify a ``message``, an e-mail message will be sent to the
+        affected account. You can include template variables in your
+        ``message`` text in ``$varname`` format. The available variables are:
+
+        * ``$username``: account's username
+        * ``$email``: user's e-mail address
+
+        Note that an account will be suspended regardless of whether you pass
+        the ``message`` argument or not.
+
+        """
+
         if not username and not email:
             raise UserAccountError('No information for account suspension')
         
