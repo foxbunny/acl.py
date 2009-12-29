@@ -443,6 +443,20 @@ class User(object):
         if email:
             suspend_dict['email'] = email
 
+        if message:
+            if username:
+                user = cls.get_user(username=username)
+            else:
+                user = cls.get_user(email=email)
+
+            user._del_code = _generate_interaction_code(username)
+            user.send_email(message=message,
+                            subject=ssp_subject,
+                            username=user.username,
+                            email=user.email)
+            user.store()
+           
+
         db.update(TABLE, where=web.db.sqlwhere(suspend_dict), active=False)
 
     @classmethod
