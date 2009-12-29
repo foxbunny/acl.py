@@ -458,3 +458,13 @@ def test_suspend_account():
     auth.User.suspend(username='myuser')
     user = auth.User.get_user(username='myuser')
     user.authenticate('abc123')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.UserAccountError)
+def test_suspend_with_message():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc123'
+    user.create(activated=True)
+    auth.User.suspend(username='myuser', message='Your account was suspended')
+    user = auth.User.get_user(username='myuser')
+    user.authenticate('abc123')
