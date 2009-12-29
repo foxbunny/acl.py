@@ -483,9 +483,7 @@ class User(object):
                             subject=ssp_subject,
                             username=user.username,
                             email=user.email)
-            user.store()
-           
-
+        
         db.update(TABLE, where=web.db.sqlwhere(suspend_dict), active=False)
 
     @classmethod
