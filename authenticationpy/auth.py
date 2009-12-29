@@ -262,6 +262,31 @@ class User(object):
 
     @classmethod
     def delete(cls, username=None, email=None, message=None):
+        """ Deletes user account optionally sending an e-mail
+
+        You must supply either ``username`` or ``email`` arguments to delete a
+        user account. In case either of the required arguments are missing,
+        ``UserAccountError`` is raised.
+
+        If you specify a ``message`` argument, the user account is not deleted,
+        but an e-mail is sent to the user. The ``message`` template may contain
+        the following template variables in ``$varname`` form:
+
+        * ``$username``: account's username
+        * ``$email``: user's e-mail address
+        * ``$url``: account removal confirmation URL suffix
+
+        You can use the optional ``confirmation`` argument to disable user
+        account deletion even if the ``message`` argument is missing, in cases
+        where you have a confirmation mechanism of your own. You can also use
+        the ``confirmation`` argument to force account removal even if you
+        specify the ``message``.
+
+        The default value of ``confirmation`` argument is ``False``, but it
+        defaults to ``True`` if ``message`` argument is used.
+
+        """
+
         if username is None and email is None:
             raise UserAccountError('No user information for deletion.')
        
