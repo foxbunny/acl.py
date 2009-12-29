@@ -158,14 +158,6 @@ class User(object):
         object.__setattr__(self, '_modified', True)
         object.__setattr__(self, name, value)
 
-    @property
-    def is_logged_in(self):
-        raise NotImplementedError
-
-    @property
-    def registered_since(self):
-        raise NotImplementedError
-
     def create(self, message=None, activated=False):
         """ Stores a new user optionally gerating a password 
         
