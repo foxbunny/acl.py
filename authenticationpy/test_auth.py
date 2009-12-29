@@ -399,3 +399,10 @@ def test_delete_user_record():
     user.create()
     auth.User.delete(username='myuser')
     assert not auth.User.get_user(username='myuser')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_delete_user_by_email():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    auth.User.delete(email='valid@email.com')
+    assert not auth.User.get_user(username='myuser')
