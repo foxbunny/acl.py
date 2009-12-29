@@ -350,8 +350,7 @@ def test_reset_password_with_confirmation():
     user.create(activated=True)
     user = auth.User.get_user(username='myuser')
     user.reset_password('123abc', 
-                        message='Please visit http://mysite.com/confirm/$url',
-                        confirmation=True)
+                        message='Please visit http://mysite.com/confirm/$url')
     assert len(user._pending_pwd) == 81
 
 @with_setup(setup=setup_table, teardown=teardown_table)
@@ -361,8 +360,7 @@ def test_reset_password_old_pwd_still_valid():
     user.create(activated=True)
     user = auth.User.get_user(username='myuser')
     user.reset_password('123abc', 
-                        message='Please visit http://mysite.com/confirm/$url',
-                        confirmation=True)
+                        message='Please visit http://mysite.com/confirm/$url')
     assert user.authenticate('abc123')
 
 @with_setup(setup=setup_table, teardown=teardown_table)
@@ -372,8 +370,7 @@ def test_confirm_reset():
     user.create(activated=True)
     user = auth.User.get_user(username='myuser')
     user.reset_password('123abc', 
-                        message='Please visit http://mysite.com/confirm/$url',
-                        confirmation=True)
+                        message='Please visit http://mysite.com/confirm/$url')
     user = auth.User.get_user(username='myuser')
     user.confirm_reset()
     assert user.authenticate('123abc')
@@ -385,8 +382,7 @@ def test_confirm_reset_with_storing():
     user.create(activated=True)
     user = auth.User.get_user(username='myuser')
     user.reset_password('123abc', 
-                        message='Please visit http://mysite.com/confirm/$url',
-                        confirmation=True)
+                        message='Please visit http://mysite.com/confirm/$url')
     user = auth.User.get_user(username='myuser')
     user.confirm_reset()
     user.store()
