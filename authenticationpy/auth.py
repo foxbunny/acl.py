@@ -57,12 +57,25 @@ def _password_hexdigest(username, salt, password):
 
 def _encrypt_password(username, cleartext):
     """ Encrypts the ``cleartext`` password and returns it """
+
     # TODO: maybe find a better salt generation code, or use longer salt
     salt = ''.join([random.choice('abcdefghijklmnopqrstuvwxyz0123456789') for i in range(16)])
     hexdigest = _password_hexdigest(username, salt, cleartext) 
     return '%s$%s' % (salt, hexdigest)
 
 def _generate_interaction_code(username):
+    """ Generate interaction code for use as a URL suffix
+
+    This method returns a tuple of the code to be stored in the database, and
+    the hexdigest to be used as the URL.
+
+    The code consists of the code generation timestamp in
+    ``YYYY_mm_dd_HH_MM_ssss`` format, and the hexdigest itself separated by the
+    dollar sign ``$``. Hexdigest is the SHA-256 hexdigest, and it is 64
+    characters long.
+
+    """
+
     timestamp = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%s')
     hexdigest = hashlib.sha256('%s%s' % (username, timestamp)).hexdigest()
     return ('%s$%s', hexdigest) % (timestamp, hexdigest)
