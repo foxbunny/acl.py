@@ -318,6 +318,7 @@ class User(object):
 
         if confirmation:
             self._pending_pwd = password
+            self._pwd_code = _generate_interaction_code(self.username)
         else:
             self.password = password
 
@@ -327,7 +328,7 @@ class User(object):
                             username=self.username,
                             email=self.email,
                             password=self._cleartext,
-                            url=self._act_code)
+                            url=self._pwd_code)
 
         self.store()
 
