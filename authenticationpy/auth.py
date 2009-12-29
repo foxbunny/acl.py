@@ -284,7 +284,7 @@ class User(object):
                                    salt,
                                    password) == crypt
 
-    def reset_password(self, password=None, message=None, confirmation=False):
+    def reset_password(self, password=None, message=None, confirmation=None):
         """ Resets the user password 
         
         ``password`` argument is optional and it is the new user password to be
@@ -302,12 +302,19 @@ class User(object):
         Optional argument ``confirmation`` can be used to disable setting the
         password. When ``confirmation`` is set to ``True`` actual password is
         not set. It is hashed and stored in a separate column, and can be set
-        later by using the ``confirm_set_pwd`` method.
+        later by using the ``confirm_set_pwd`` method. By default
+        ``confirmation`` argument is ``False``. However, if you pass the
+        ``message`` argument, the default changes to ``True``. You only need to
+        set ``confirmation`` to ``True`` if you are not passing the ``message``
+        argument.
 
         """
 
         if not password:
             password = _generate_password()
+
+        if confirmation is None and message:
+            confirmation = True
 
         if confirmation:
             self._pending_pwd = password
