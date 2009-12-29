@@ -260,8 +260,20 @@ class User(object):
     def activate(self):
         self.active = True
 
-    def delete(self, message=None):
-        raise NotImplementedError
+    @classmethod
+    def delete(cls, username=None, email=None, message=None):
+        delete_dict = {}
+
+        if username:
+            delete_dict['username'] = username
+
+        if email:
+            delete_dict['email'] = email
+
+        if not delete_dict:
+            raise UserAccountError('No user information for deletion.')
+
+        db.delete(TABLE, where=web.db.sqlwhere(delete_dict))
 
     def authenticate(self, password):
         """ Test ``password`` and return boolean success status """
