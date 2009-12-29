@@ -240,11 +240,17 @@ Here's a simple example::
 
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
-   >>> user.send_email(message="Hi, $username!")
+   >>> user.send_email(message="Hi!")
 
 As will all other e-mail facilities, you can add template variables to the
-e-mail message, but for regular e-mail, you are limited to the ``$username``
-only.
+e-mail message, but for regular e-mail, you can use any template variables you
+like. Just pass any variable as a keyword argument::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.send_email(message="$greeting, $username",
+   ...                 greeting="Hello,",
+   ...                 username=user.username)
 
 Deleting a user
 ---------------
