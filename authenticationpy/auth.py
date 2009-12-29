@@ -479,7 +479,6 @@ class User(object):
             else:
                 user = cls.get_user(email=email)
 
-            user._del_code = _generate_interaction_code(username)
             user.send_email(message=message,
                             subject=ssp_subject,
                             username=user.username,
