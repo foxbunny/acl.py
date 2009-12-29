@@ -272,8 +272,22 @@ class User(object):
 
         if not delete_dict:
             raise UserAccountError('No user information for deletion.')
+        if message:
+            if username:
+                user = cls.get_user(username=username)
+            else:
+                user = cls.get_user(email=email)
 
-        db.delete(TABLE, where=web.db.sqlwhere(delete_dict))
+            user._del_code = _generate_interaction_code(username)
+            user.send_email(message=message,
+                            subject=del_subject,
+                            username=username,
+                            email=email,
+                            url=user._del_code)
+            user.store()
+            
+        else:
+            db.delete(TABLE, where=web.db.sqlwhere(delete_dict))
 
     def authenticate(self, password):
         """ Test ``password`` and return boolean success status """
