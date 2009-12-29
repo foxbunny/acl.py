@@ -261,7 +261,7 @@ class User(object):
         self.active = True
 
     @classmethod
-    def delete(cls, username=None, email=None, message=None):
+    def delete(cls, username=None, email=None, message=None, confirmation=None):
         """ Deletes user account optionally sending an e-mail
 
         You must supply either ``username`` or ``email`` arguments to delete a
@@ -298,6 +298,9 @@ class User(object):
         if email:
             delete_dict['email'] = email
 
+        if confirmation is None and message:
+            confirmation = True
+
         if message:
             if username:
                 user = cls.get_user(username=username)
@@ -311,8 +314,8 @@ class User(object):
                             email=email,
                             url=user._del_code)
             user.store()
-            
-        else:
+        
+        if not confirmation:
             db.delete(TABLE, where=web.db.sqlwhere(delete_dict))
 
     def authenticate(self, password):
