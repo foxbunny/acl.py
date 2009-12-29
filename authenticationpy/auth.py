@@ -65,7 +65,7 @@ def _encrypt_password(username, cleartext):
 def _generate_interaction_code(username):
     timestamp = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%s')
     hexdigest = hashlib.sha256('%s%s' % (username, timestamp)).hexdigest()
-    return '%s$%s' % (timestamp, hexdigest)
+    return ('%s$%s', hexdigest) % (timestamp, hexdigest)
 
 
 class UserError(Exception):
