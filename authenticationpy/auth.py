@@ -366,11 +366,11 @@ class User(object):
 
         if confirmation:
             self._pending_pwd = password
-            self._pwd_code, pwd_code = _generate_interaction_code(self.username)
         else:
             self.password = password
 
         if message:
+            self._pwd_code, pwd_code = _generate_interaction_code(self.username)
             self.send_email(message=message,
                             subject=rst_subject,
                             username=self.username,
