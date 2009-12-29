@@ -123,7 +123,6 @@ class User(object):
         object.__setattr__(self, '_act_code', None)
         object.__setattr__(self, '_del_code', None)
         object.__setattr__(self, '_pwd_code', None)
-        object.__setattr__(self, '_modified', False)
         object.__setattr__(self, '_cleartext', None)
         object.__setattr__(self, '_account_id', None)
         object.__setattr__(self, '_dirty_fields', [])
@@ -168,7 +167,6 @@ class User(object):
             self._dirty_fields.append((name, name[1:]))
 
         # no errors so far, so go ahead and assign
-        object.__setattr__(self, '_modified', True)
         object.__setattr__(self, name, value)
 
     def create(self, message=None, activated=False):
