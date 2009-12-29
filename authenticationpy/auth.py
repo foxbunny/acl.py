@@ -431,7 +431,20 @@ class User(object):
         if self._account_id:
             return False
         return True
-         
+
+    @classmethod
+    def suspend(cls, username=None, email=None, message=None):
+        if not username and not email:
+            raise UserAccountError('No information for account suspension')
+        
+        suspend_dict = {}
+        if username:
+            suspend_dict['username'] = username
+        if email:
+            suspend_dict['email'] = email
+
+        db.update(TABLE, where=web.db.sqlwhere(suspend_dict), active=False)
+
     @classmethod
     def get_user(cls, username=None, email=None):
         """ Get user from the database and return ``User`` instance
