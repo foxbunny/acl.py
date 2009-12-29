@@ -312,12 +312,12 @@ class User(object):
             else:
                 user = cls.get_user(email=email)
 
-            user._del_code = _generate_interaction_code(username)
+            user._del_code, del_code = _generate_interaction_code(username)
             user.send_email(message=message,
                             subject=del_subject,
                             username=user.username,
                             email=user.email,
-                            url=user._del_code)
+                            url=del_code)
             user.store()
         
         if not confirmation:
