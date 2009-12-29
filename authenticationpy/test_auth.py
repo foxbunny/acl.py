@@ -392,3 +392,10 @@ def test_confirm_reset_with_storing():
     user.store()
     user = auth.User.get_user(username='myuser')
     assert user.authenticate('123abc')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_delete_user_record():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    auth.User.delete(username='myuser')
+    assert not auth.User.get_user(username='myuser')
