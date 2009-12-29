@@ -262,6 +262,9 @@ class User(object):
 
     @classmethod
     def delete(cls, username=None, email=None, message=None):
+        if username is None and email is None:
+            raise UserAccountError('No user information for deletion.')
+       
         delete_dict = {}
 
         if username:
@@ -270,8 +273,6 @@ class User(object):
         if email:
             delete_dict['email'] = email
 
-        if not delete_dict:
-            raise UserAccountError('No user information for deletion.')
         if message:
             if username:
                 user = cls.get_user(username=username)
