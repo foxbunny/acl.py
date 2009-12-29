@@ -432,3 +432,10 @@ def test_delete_user_with_confirmation():
                      message='Click http://mysite.com/delete/$url to confirm')
     user = auth.User.get_user(username='myuser')
     assert len(user._del_code) == 92
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_delete_user_with_confirmation_no_message():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    auth.User.delete(username='myuser', confirmation=True)
+    assert auth.User.get_user(username='myuser')
