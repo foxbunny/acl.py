@@ -225,7 +225,7 @@ class User(object):
 
     def store(self):
         """ Stores a user account """
-        if self._modified:
+        if self._dirty_fields:
             transaction = db.transaction()
             try:
                 if self._new_account:
