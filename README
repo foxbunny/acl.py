@@ -310,6 +310,16 @@ the only available template variables are:
 * ``$username``: account username
 * ``$email``: user's e-mail address
 
+You can also suspend an account by simply deactivating it::
+
+   >>> from authenticationpy.auth import User
+   >>> user = User.get_user(username='myuser')
+   >>> user.active = False
+   >>> user.store()
+
+Trying to authenticate using a suspended account will result in a
+``UserAccountError`` exception.
+
 Updating user details
 ---------------------
 
