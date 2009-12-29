@@ -302,8 +302,8 @@ class User(object):
             user._del_code = _generate_interaction_code(username)
             user.send_email(message=message,
                             subject=del_subject,
-                            username=username,
-                            email=email,
+                            username=user.username,
+                            email=user.email,
                             url=user._del_code)
             user.store()
         
