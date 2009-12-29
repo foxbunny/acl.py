@@ -206,6 +206,16 @@ The template for the ``message`` argument can contain the following variables:
 * ``$email``: the user's e-mail address
 * ``$password``: the new cleartext password
 
+If you are not sending any confirmation e-mail, but you still use a different
+confirmation method, you can use the ``confirmation`` argument. If you pass
+this argument with the value of ``True``, ``reset_password`` will behave as if
+you have passed it the ``message`` argument.
+
+You can also set the new password even if you send the e-mail. For example, if
+you want to simply notify your user, rather than request an action, you can
+pass the ``confirmation`` argument with the value of ``False`` and omit the URL
+from URL from your message.
+
 Confirming password resets
 --------------------------
 
