@@ -1,6 +1,7 @@
 import web
 
 import config
+from debate import *
 
 urls = (
     '/', 'debates',
