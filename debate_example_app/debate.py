@@ -34,9 +34,6 @@ is called differently. ::
 import web
 from authenticationpy.auth import User
 
-db = web.config.db
-admin_username = web.config.admin
-
 
 class debates:
     def GET(self):
