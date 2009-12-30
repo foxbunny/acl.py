@@ -6,10 +6,10 @@ Database schema
 ---------------
 
 This is an example of the database schema for PostgreSQL. You must adapt the
-chema to your own database server, and create the specified tables before using
-the example app. It is assumed that the autentication.py users table is called
-``authenticationpy_users``, but you should edit this name if your table is
-called differently. ::
+schema to your own database server, and create the specified tables before
+using the example app. It is assumed that the autentication.py users table is
+called ``authenticationpy_users``, and you should edit this name if your table
+is called differently. ::
 
    CREATE TABLE debates (
      id         serial PRIMARY KEY,
