@@ -42,21 +42,28 @@ class debates:
     def GET(self):
         pass
 
+class new_debate:
     def POST(self):
         pass
-
 
 class debate:
-    def GET(self):
+    def GET(self, title):
         pass
 
-    def POST(self):
+    def POST(self, title):
         pass
 
+class delete_debate:
+    def POST(self, title):
+        pass
 
 class argument:
-    def GET(self):
+    def GET(self, title, username):
         pass
 
-    def POST(self):
+    def POST(self, title, username):
+        pass
+
+class delete_argument:
+    def POST(self, title, username):
         pass
