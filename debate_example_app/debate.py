@@ -13,11 +13,12 @@ is called differently. ::
 
    CREATE TABLE debates (
      id         serial PRIMARY KEY,
-     summary    varchar(255),
+     title      varchar(255) UNIQUE,
      topic      text,
      posted_at  timestamp DEFAULT CURRENT_TIMESTAMP
      author_id  integer REFERENCES authenticationpy_users (id)
    );
+   CREATE INDEX title_index ON debates (title)
 
    CREATE TABLE arguments (
      id         serial PRIMARY KEY,
