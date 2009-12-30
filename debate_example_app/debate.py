@@ -15,17 +15,17 @@ is called differently. ::
      id         serial PRIMARY KEY,
      title      varchar(255) UNIQUE,
      topic      text,
-     posted_at  timestamp DEFAULT CURRENT_TIMESTAMP
+     posted_at  timestamp DEFAULT CURRENT_TIMESTAMP,
      author_id  integer REFERENCES authenticationpy_users (id)
    );
-   CREATE INDEX title_index ON debates (title)
+   CREATE INDEX title_index ON debates (title);
 
    CREATE TABLE arguments (
      id         serial PRIMARY KEY,
      debate_id  integer REFERENCES debates (id)
      argument   text,
-     posted_at  timestamp DEFAULT CURRENT_TIMESTAMP
-     author_id  integer REFERENCES authenticationpy_users (id)
+     posted_at  timestamp DEFAULT CURRENT_TIMESTAMP,
+     author_id  integer REFERENCES authenticationpy_users (id),
      UNIQUE (debate_id, author_id)
    );
 
