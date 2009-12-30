@@ -42,9 +42,11 @@ class debates:
     def GET(self):
         pass
 
+
 class new_debate:
     def POST(self):
         pass
+
 
 class debate:
     def GET(self, title):
@@ -53,9 +55,11 @@ class debate:
     def POST(self, title):
         pass
 
+
 class delete_debate:
     def POST(self, title):
         pass
+
 
 class argument:
     def GET(self, title, username):
@@ -64,6 +68,8 @@ class argument:
     def POST(self, title, username):
         pass
 
+
 class delete_argument:
     def POST(self, title, username):
         pass
+
