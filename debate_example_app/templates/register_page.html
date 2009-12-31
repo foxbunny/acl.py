@@ -1,0 +1,21 @@
+$def with (form)
+
+<h1>Register an account</h1>
+
+<p>After registering an account at Debate Example App, you will be able to post new debates, and participate in existing ones.</p>
+
+<p>We don't give away your personal data to anyone, yada yada, you know the story.</p>
+
+<form action="/register" method="post">
+    $for i in form.inputs:
+        <p>
+        <label for="username">$i.description</label><br />
+        $:i.render()
+        $if i.note:
+            <br />
+            <strong>$i.note</strong>
+        </p>
+    <p>
+    <input type="submit" name="submit" value="Register" />
+    </p>
+</form>
