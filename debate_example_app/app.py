@@ -18,6 +18,7 @@ urls = (
 
 app = web.application(urls, globals())
 
+web.config.session = web.session.Session(app, config.sess_store, config.sess_init)
 
 if __name__ == '__main__':
     print "Starting up..."
