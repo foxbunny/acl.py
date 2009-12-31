@@ -1,0 +1,9 @@
+$def with (form)
+
+<form action="/login" method="post">
+    <label for="username">$form.username.description:</label>
+    $:form.username.render()
+    <label for="password">$form.password.description:</label>
+    $:form.password.render()
+    <input type="submit" name="submit" id="login_form_submit" value="Log in" />
+</form>
