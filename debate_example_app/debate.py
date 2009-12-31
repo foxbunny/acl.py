@@ -36,6 +36,7 @@ is called differently. ::
 """
 
 import web
+
 from authenticationpy.auth import User
 
 
