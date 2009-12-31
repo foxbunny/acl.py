@@ -1,0 +1,39 @@
+$def with (form)
+
+<h1>Log into Debate Example App</h1>
+
+<p>
+Do you have an account? If you do, you may log in below, or you can <a href="/register">register</a> to get an account.<br />
+</p>
+
+$if form.note:
+    <p id="notes">
+    $form.note
+    </p>
+
+<form action="/login" method="post">
+    <p>
+    <label for="username">$form.username.description</label><br />
+    $:form.username.render()
+    $if form.username.note:
+        <br />
+        <strong>$form.username.note</strong>
+    </p>
+
+    <p>
+    <label for="password">$form.password.description</label><br />
+    $:form.password.render()
+    $if form.password.note:
+        <br />
+        <strong>$form.password.note</strong>
+    </p>
+
+    <p>
+    <input type="submit" name="submit" value="Log in" />
+    </p>
+
+    <p>
+    <input type="checkbox" name="remember" id="remember" value="false" />
+    <label for="remember">Keep me logged in for the next two weeks</label>
+    </p>
+</form>
