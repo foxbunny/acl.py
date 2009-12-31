@@ -1,0 +1,18 @@
+Dear $$username,
+
+Someone (probably you) registered an account at Debate Example App using 
+the e-mail address $$email. If you want to activate the account, please
+click the link below:
+
+http://0.0.0.0:8080/$$url
+
+If you cannot click the link, copy and paste it into your browser's 
+address bar (also called location bar in some browsers). The link is 
+valid for next 48 hours.
+
+If you did not register an account, or you don't want to activate it,
+simply ignore this e-mail.
+
+
+
+Debate Example App Staff
