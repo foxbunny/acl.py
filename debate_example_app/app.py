@@ -45,6 +45,23 @@ class register:
         content = render.register_page(f)
         return render.base_clean(content)
 
+    def POST(self):
+        f = register_form()
+        if not f.validates():
+            content = render.register_page(f)
+            return render.base_clean(content)
+        user = User(username=f.username.value,
+                    email=f.email.value)
+        user.password = f.password.value
+        try:
+            user.create(message=render.activation_email())
+        except UserAccountError:
+            f.note = 'You cannot register using this username or e-mail'
+            content = render.register_page(f)
+            return render.base_clean(content)
+        raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
+
+
 app = web.application(urls, globals())
 
 web.config.session = web.session.Session(app, config.sess_store, config.sess_init)
