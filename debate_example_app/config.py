@@ -7,6 +7,12 @@ web.config.db = web.database(dbn='postgres', db='debate_example', user='postgres
 sitename = 'Debate club'
 web.config.admin_user = 'administrator'
 
+# sessions configuration
+sess_store = web.session.DBStore(web.config.db, 'sessions')
+sess_init = {
+    'user': None, # should be taken as user == Guest
+}
+
 # authentication.py config
 web.config.authdb = web.config.db
 web.config.authmail = {'sender': 'your.email@server.com',
