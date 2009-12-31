@@ -9,8 +9,7 @@ valid_username = web.form.regexp(r'^[A-Za-z]{1}[A-Za-z0-9.-_]{3,39}$',
 valid_email = web.form.regexp(r"(^[-!#$%&'*+/=?^_`{}|~0-9a-z]+(\.[-!#$%&'*+/=?^_`{}|~0-9a-z]+)*"  # dot-atom
                               r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"' # quoted-string
                               r')@(?:[a-z0-9]+(?:-*[a-z0-9]+)*\.)+[a-z]{2,6}$', # domain
-                              'Please enter a valid e-mail',
-                              re_flags=re.I)
+                              'Please enter a valid e-mail')
 
 valid_password = web.form.regexp(r'.+', 'Please enter your password')
 
