@@ -73,6 +73,14 @@ migrations = {
         ALTER TABLE arguments ADD COLUMN slug varchar(255) UNIQUE;
         CREATE UNIQUE INDEX arguments_slug_index ON arguments USING btree (slug);
     """,
+    6.0: """
+        CREATE TABLE sessions (
+            session_id  char(128) UNIQUE NOT NULL,
+            atime       timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            data        text
+        );
+        CREATE UNIQUE INDEX session_id_index ON sessions USING btree (session_id);
+    """,
 }
 
 
