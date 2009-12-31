@@ -14,3 +14,4 @@ web.config.authmail = {'sender': 'your.email@server.com',
                        'reset_subject': '%s: Password reset' % sitename,
                        'delete_subject': '%s: Confirm account removal' % sitename,
                        'suspend_subject': '%s: Account suspended' % sitename}
+web.config.auth_forms_templates = 'templates' # path to templates used by auth
