@@ -13,6 +13,13 @@ sess_init = {
     'user': None, # should be taken as user == Guest
 }
 
+# e-mail configuration
+web.config.smtp_server = 'smtp.gmail.com'
+web.config.smtp_port = 587
+web.config.smtp_username = ''
+web.config.smtp_password = ''
+web.config.smtp_starttls = True
+
 # authentication.py config
 web.config.authdb = web.config.db
 web.config.authmail = {'sender': 'your.email@server.com',
