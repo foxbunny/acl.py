@@ -1,0 +1,33 @@
+$def with (debates, user, login_form_html)
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/1999/xhtml">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>Debate club</title>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    </head>
+    <body>
+        <div id="login">
+        $if user:
+            <p>Welcome, $user.username. | <a href="/logoff">Log off</a> | <a href="/unregister">Delete account</a></p>
+        $else:
+            <p>$:login_form_html | <a href="/register">Register</a></p>
+        </div>
+        
+        <h1>Welcome to Debate Example App</h1>
+        <p>You have an important issue you want to share with the world? People are all different and everyone has something to say about different topics. <a href="/new">Open a debate</a> and invide everyone to start thinking. You can pick any topic you want, and there is no cencorship.</a>
+    
+        <h2>Currently open debates</h2>
+        <p><a href="/new">Open new debate</a></p>
+        <div id="debates">
+        $if debates:
+            <ul>
+            $for d in debates:
+                <li><a hred="/$d.slug">$d.title</a></li>
+            </ul>
+        $else:
+            <p>There are currently no open debates</p>
+        </div>
+    </body>
+</html>
