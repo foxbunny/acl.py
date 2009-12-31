@@ -53,7 +53,8 @@ class debates:
             # if username is not ``None``, grab the user from the database
             user = User.get_user(username=uname)
         debates = web.config.db.select('debates')
-        return render.debates(debates, user, login_form_html)
+        content = render.debates(debates)
+        return render.base_template(content, user, login_form)
 
 class new_debate:
     def POST(self):
