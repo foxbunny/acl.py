@@ -41,8 +41,7 @@ from authenticationpy.auth import User
 from auth_forms import login_form
 
 render = web.template.render('templates')
-
-login_form_html = render_login_form()
+login_form = login_form()
 
 class debates:
     def GET(self):
