@@ -24,12 +24,14 @@ is called differently. ::
 
    CREATE TABLE arguments (
      id         serial PRIMARY KEY,
-     debate_id  integer REFERENCES debates (id)
+     debate_id  integer REFERENCES debates (id),
+     slug       varchar(255) UNIQUE,
      argument   text,
      posted_at  timestamp DEFAULT CURRENT_TIMESTAMP,
      author_id  integer REFERENCES authenticationpy_users (id),
      UNIQUE (debate_id, author_id)
    );
+   CREATE UNIQUE INDEX arguements_slug_index ON arguments USING btree (slug);
 
 """
 
