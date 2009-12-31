@@ -69,6 +69,10 @@ migrations = {
         ALTER TABLE debates ADD COLUMN slug varchar(255) UNIQUE;
         CREATE UNIQUE INDEX debates_slug_index ON debates USING btree (slug);
     """,
+    5.0: """
+        ALTER TABLE arguments ADD COLUMN slug varchar(255) UNIQUE;
+        CREATE UNIQUE INDEX arguments_slug_index ON arguments USING btree (slug);
+    """,
 }
 
 
