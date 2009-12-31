@@ -2,6 +2,7 @@ import web
 
 import config
 from debate import *
+from authenticationpy.auth import User, UserAccountError
 from auth_forms import login_form, register_form
 
 urls = (
@@ -24,6 +25,19 @@ class login:
         f = login_form()
         content = render.login_page(f)
         return render.base_clean(content)
+
+    def POST(self):
+        f = login_form()
+        if not f.validates():
+            content = render.login_page(f)
+            return render.base_clean(content)
+        user = User.get_user(username=f.username.value)
+        if not user or not user.authenticate(f.password.value):
+            f.note = "Wrong username or password. Please try again."
+            content = render.login_page(f)
+            return render.base_clean(content)
+        web.config.session['user'] = user.username
+        raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
 app = web.application(urls, globals())
 
 web.config.session = web.session.Session(app, config.sess_store, config.sess_init)
