@@ -2,6 +2,7 @@ import re
 import random
 import hashlib
 import datetime
+import string
 
 import web
 
@@ -428,8 +429,10 @@ class User(object):
             kwargs = {'sender': sender,
                       'username': self.username,
                       'email': self.email }
-        body = message.format(**kwargs)
+        template = string.Template(message)
+        body = template.substitute(**kwargs)
         try:
+            
             web.utils.sendmail(from_address=sender,
                                to_address=self.email,
                                subject=subject,
