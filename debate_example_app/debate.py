@@ -38,7 +38,7 @@ is called differently. ::
 import web
 
 from authenticationpy.auth import User
-from login_form import render_login_form
+from auth_forms import login_form
 
 render = web.template.render('templates')
 
