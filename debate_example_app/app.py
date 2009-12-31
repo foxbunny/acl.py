@@ -38,6 +38,13 @@ class login:
             return render.base_clean(content)
         web.config.session['user'] = user.username
         raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
+
+class register:
+    def GET(self):
+        f = register_form()
+        content = render.register_page(f)
+        return render.base_clean(content)
+
 app = web.application(urls, globals())
 
 web.config.session = web.session.Session(app, config.sess_store, config.sess_init)
