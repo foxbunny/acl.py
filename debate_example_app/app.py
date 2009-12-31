@@ -18,5 +18,7 @@ urls = (
 
 app = web.application(urls, globals())
 
-if __name__ == '__mail__':
+
+if __name__ == '__main__':
+    print "Starting up..."
     app.run()
