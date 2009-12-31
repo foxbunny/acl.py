@@ -14,11 +14,13 @@ is called differently. ::
    CREATE TABLE debates (
      id         serial PRIMARY KEY,
      title      varchar(255) UNIQUE,
+     slug       varchar(255) UNIQUE,
      topic      text,
      posted_at  timestamp DEFAULT CURRENT_TIMESTAMP,
      author_id  integer REFERENCES authenticationpy_users (id)
    );
-   CREATE INDEX title_index ON debates (title);
+   CREATE UNIQUE INDEX title_index ON debates USING btree (title);
+   CREATE UNIQUE INDEX debates_slug_index ON debates USING btree (slug);
 
    CREATE TABLE arguments (
      id         serial PRIMARY KEY,
