@@ -1,3 +1,5 @@
+import datetime
+
 import web
 from nose.tools import *
 
@@ -474,4 +476,10 @@ def test_set_interaction_sets_act_code():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_interaction('activate')
     assert len(user._act_code) == 64
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_set_interaction_sets_act_time():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_interaction('activate')
+    assert type(user._act_time) == datetime.datetime
 
