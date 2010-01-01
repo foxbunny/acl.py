@@ -4,7 +4,7 @@ Someone (probably you) registered an account at Debate Example App using
 the e-mail address $$email. If you want to activate the account, please
 click the link below:
 
-http://0.0.0.0:8080/$$url
+http://0.0.0.0:8080/activate/$$url
 
 If you cannot click the link, copy and paste it into your browser's 
 address bar (also called location bar in some browsers). The link is 
