@@ -516,3 +516,9 @@ def test_wrapper_reset_interaction():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_reset()
     assert user._act_type == 'r'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_interaction_timeout():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    assert user.is_interaction_timely(type='a', deadline=10)
