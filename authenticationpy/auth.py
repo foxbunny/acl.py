@@ -614,8 +614,13 @@ class User(object):
         if len(records) == 0:
             # There is nothing to return
             return None
-        
-        user_account = records[0]
+
+        return cls._map_user_properties(records[0])
+
+    @classmethod
+    def _map_user_properties(cls, user_account):
+        """ Maps user records to instance properties """
+
         try:
             user_username = user_account.username
             user_email = user_account.email
