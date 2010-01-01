@@ -483,3 +483,13 @@ def test_set_interaction_sets_act_time():
     user.set_interaction('activate')
     assert type(user._act_time) == datetime.datetime
 
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_set_interaction_sets_act_type():
+    for type in [('activate', 'a'), ('delete', 'd'), ('reset', 'r')]:
+        yield check_act_type, type
+
+def check_act_type(type):
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_interaction(type[0])
+    assert user._act_type == type[1]
+
