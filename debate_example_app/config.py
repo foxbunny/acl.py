@@ -1,5 +1,8 @@
 import web
 
+# debug
+web.config.debug = False
+
 # modify the parameters according to your own situation
 web.config.db = web.database(dbn='postgres', db='debate_example', user='postgres')
 
