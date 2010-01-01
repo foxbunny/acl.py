@@ -31,9 +31,9 @@ def setup_table():
                      email            VARCHAR(80) NOT NULL UNIQUE,
                      password         CHAR(81) NOT NULL,
                      pending_pwd      CHAR(81),
-                     act_code         CHAR(92),
-                     del_code         CHAR(92),
-                     pwd_code         CHAR(92), 
+                     act_code         CHAR(64),
+                     act_time         TIMESTAMP,
+                     act_type         CHAR(1),
                      registered_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                      active           BOOLEAN DEFAULT 'false' 
                    );
