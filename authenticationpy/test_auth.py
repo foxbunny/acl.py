@@ -148,7 +148,7 @@ def test_activation_withut_email():
 def test_create_with_email_sets_act_code():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create(message='This is an activation mail')
-    assert len(user._act_code) == 92
+    assert len(user._act_code) == 64
 
 @with_setup(setup=setup_table, teardown=teardown_table)
 def test_activation_code_in_db():
@@ -351,7 +351,7 @@ def test_reset_password_with_confirmation_reset_code():
     user = auth.User.get_user(username='myuser')
     user.reset_password('123abc', 
                         message='Please visit http://mysite.com/confirm/$url')
-    assert len(user._pwd_code) == 92
+    assert len(user._act_code) == 64
 
 @with_setup(setup=setup_table, teardown=teardown_table)
 def test_reset_password_with_confirmation():
@@ -431,7 +431,7 @@ def test_delete_user_with_confirmation():
     auth.User.delete(username='myuser',
                      message='Click http://mysite.com/delete/$url to confirm')
     user = auth.User.get_user(username='myuser')
-    assert len(user._del_code) == 92
+    assert len(user._act_code) == 64
 
 @with_setup(setup=setup_table, teardown=teardown_table)
 def test_delete_user_with_confirmation_no_message():
