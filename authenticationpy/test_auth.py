@@ -468,3 +468,10 @@ def test_suspend_with_message():
     auth.User.suspend(username='myuser', message='Your account was suspended')
     user = auth.User.get_user(username='myuser')
     user.authenticate('abc123')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_set_interaction_sets_act_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_interaction('activate')
+    assert len(user._act_code) == 64
+
