@@ -495,6 +495,12 @@ def check_act_type(type):
     assert user._act_type == type[1]
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_set_interaction_returns_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    code = user.set_interaction('a')
+    assert code == user._act_code
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 @raises(ValueError)
 def test_wrong_interaction_type():
     user = auth.User(username='myuser', email='valid@email.com')
