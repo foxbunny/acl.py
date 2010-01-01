@@ -16,6 +16,7 @@ urls = (
     '/logoff', 'logoff',
     '/register', 'register',
     '/unregister', 'unregister',
+    '/reset_password', 'reset_password',
     '/activate/([a-f0-9]{64})', 'activate',
     '/activate/request_code', 'request_code',
 )
