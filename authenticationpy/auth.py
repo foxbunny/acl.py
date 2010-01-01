@@ -196,7 +196,7 @@ class User(object):
 
     def set_activation(self):
         """ Activation wrapper for ``set_interaction`` """
-        self.set_interaction('a')
+        return self.set_interaction('a')
 
     def set_delete(self):
         """ Delete confirmation wrapper for ``set_interaction`` """
