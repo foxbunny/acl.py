@@ -611,7 +611,7 @@ class User(object):
         
         records = db.where(TABLE, **select_dict)
 
-        if len(records) == 0:
+        if not records:
             # There is nothing to return
             return None
 
