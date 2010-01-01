@@ -214,13 +214,14 @@ class User(object):
             self.activate()
         
         if message:
-            self._act_code, act_code = _generate_interaction_code(self.username)
+            self._act_time, self._act_code = _generate_interaction_code(self.username)
+            self._act_type = 'a' # 'a' for activate
             self.send_email(message=message,
                             subject=act_subject,
                             username=self.username,
                             email=self.email,
                             password=self._cleartext,
-                            url=act_code)
+                            url=self._act_code)
         self.store()
 
     def store(self):
@@ -252,6 +253,8 @@ class User(object):
                        'active': self.active}
         if self._act_code:
             insert_dict['act_code'] = self._act_code
+            insert_dict['act_time'] = self._act_time
+            insert_dict['act_type'] = self._act_type
         return insert_dict
 
     @property
@@ -312,12 +315,13 @@ class User(object):
             else:
                 user = cls.get_user(email=email)
 
-            user._del_code, del_code = _generate_interaction_code(username)
+            user._act_time, user._act_code = _generate_interaction_code(username)
+            user._act_type = 'd' # 'd' for delete
             user.send_email(message=message,
                             subject=del_subject,
                             username=user.username,
                             email=user.email,
-                            url=del_code)
+                            url=user._act_code)
             user.store()
         
         if not confirmation:
@@ -370,13 +374,14 @@ class User(object):
             self.password = password
 
         if message:
-            self._pwd_code, pwd_code = _generate_interaction_code(self.username)
+            self._act_time, self._act_code = _generate_interaction_code(self.username)
+            self._act_type = 'p' # 'p' for password reset
             self.send_email(message=message,
                             subject=rst_subject,
                             username=self.username,
                             email=self.email,
                             password=self._cleartext,
-                            url=pwd_code)
+                            url=self._act_code)
 
         self.store()
 
@@ -538,8 +543,8 @@ class User(object):
                 'password': user_account.password,
                 '_pending_pwd': user_account.pending_pwd,
                 '_act_code': user_account.act_code,
-                '_del_code': user_account.del_code,
-                '_pwd_code': user_account.pwd_code,
+                '_act_time': user_account.act_time,
+                '_act_type': user_account.act_type,
                 'registered_at': user_account.registered_at,
                 'active': user_account.active,
             }
