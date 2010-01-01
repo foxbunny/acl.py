@@ -495,6 +495,6 @@ def check_act_type(type):
 
 @with_setup(setup=setup_table, teardown=teardown_table)
 @raises(ValueError)
-def test_wront_interaction_type():
+def test_wrong_interaction_type():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_interaction('bogus')
