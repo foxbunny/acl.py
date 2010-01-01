@@ -169,18 +169,40 @@ class User(object):
         object.__setattr__(self, name, value)
 
     def set_interaction(self, type):
+        """ Sets interaction data
+
+        The only required argument is ``type``, which must be one of the
+        following:
+
+        * 'activate' ('a' for short)
+        * 'delete' ('d' for short)
+        * 'reset' ('r' for short)
+
+        If the ``type`` doesn't match any of the allowed values, ``ValueError``
+        is raised.
+
+        This method registers the type of the interaction, as well as the time
+        of registration, and action code. Those pieces of information are
+        stored in ``_act_type``, ``_act_time``, and ``_act_code`` properties
+        respectively.
+
+        """
+
         if not type in ['activate', 'delete', 'reset', 'a', 'd', 'r']:
             raise ValueError("Interaction type must be 'activate', 'delete', or 'reset'.")
         self._act_time, self._act_code = _generate_interaction_code(self.username)
         self._act_type = type[:1]
 
     def set_activation(self):
+        """ Activation wrapper for ``set_interaction`` """
         self.set_interaction('a')
 
     def set_delete(self):
+        """ Delete confirmation wrapper for ``set_interaction`` """
         self.set_interaction('d')
 
     def set_reset(self):
+        """ Reset confirmation wrapper for ``set_interaction`` """
         self.set_interaction('r')
 
     def create(self, message=None, activated=False):
