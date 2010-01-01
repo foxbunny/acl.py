@@ -170,6 +170,9 @@ class User(object):
         self._act_time, self._act_code = _generate_interaction_code(self.username)
         self._act_type = type[:1]
 
+    def set_activation(self):
+        self.set_interaction('a')
+
     def create(self, message=None, activated=False):
         """ Stores a new user optionally gerating a password 
         
