@@ -1,4 +1,5 @@
 import datetime
+import time
 
 import web
 from nose.tools import *
@@ -522,3 +523,10 @@ def test_interaction_timeout():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_activation()
     assert user.is_interaction_timely(type='a', deadline=10)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_interaction_past_deadline():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    time.sleep(2)
+    assert not user.is_interaction_timely('a', 1)
