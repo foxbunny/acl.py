@@ -99,6 +99,10 @@ class DuplicateEmailError(UserError):
     pass
 
 
+class UserInteractionError(UserError):
+    pass
+
+
 class User(object):
     """ User and user management class
 
