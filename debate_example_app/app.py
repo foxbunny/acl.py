@@ -63,6 +63,30 @@ class register:
             return render.base_clean(content)
         raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
 
+class activate:
+    def GET(self, code):
+        try:
+            user = User.get_user_by_act_code(code)
+        except UserAccountError:
+            # Activation code is not valid format
+            return render.activation_failed()
+
+        if not user:
+            # No account matches the code
+            return render.activation_failed()
+
+        deadline = 172800 # 48 hours in seconds
+
+        if not user.is_interaction_timely('activation', deadline):
+            # User took too long to activate
+            return render.activation_failed()
+
+        # Seems like activation was successful, let's clear interaction data
+        user.clear_interaction()
+        user.store()
+
+        return render.activation_success()
+
 
 app = web.application(urls, globals())
 
