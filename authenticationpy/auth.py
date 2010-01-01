@@ -173,6 +173,9 @@ class User(object):
     def set_activation(self):
         self.set_interaction('a')
 
+    def set_delete(self):
+        self.set_interaction('d')
+
     def create(self, message=None, activated=False):
         """ Stores a new user optionally gerating a password 
         
