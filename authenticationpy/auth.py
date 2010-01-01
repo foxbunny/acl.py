@@ -620,6 +620,9 @@ class User(object):
     @classmethod
     def get_user_by_act_code(cls, act_code):
         """ Gets a user account by interaction code """
+        if not re.match(r'^[a-f0-9]{64}$', act_code):
+            raise UserAccountError('Action code is not the right format.')
+
         records = db.where(TABLE, act_code=act_code)
         
         if not records:
