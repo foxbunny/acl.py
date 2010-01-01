@@ -164,6 +164,12 @@ class User(object):
         # no errors so far, so go ahead and assign
         object.__setattr__(self, name, value)
 
+    def set_interaction(self, type):
+        if not type in ['activate', 'delete', 'reset', 'a', 'd', 'r']:
+            raise ValueError("Interaction type must be 'activate', 'delete', or 'reset'.")
+        self._act_time, self._act_code = _generate_interaction_code(self.username)
+        self._act_type = type[:1]
+
     def create(self, message=None, activated=False):
         """ Stores a new user optionally gerating a password 
         
