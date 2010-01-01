@@ -3,7 +3,7 @@ import web
 import config
 from debate import *
 from authenticationpy.auth import User, UserAccountError
-from auth_forms import login_form, register_form
+from auth_forms import login_form, register_form, request_code_form
 
 urls = (
     '/', 'debates',
@@ -87,6 +87,42 @@ class activate:
 
         return render.activation_success()
 
+
+class request_code:
+    def GET(self):
+        i = web.input(status='none')
+        if i.status == 'done':
+            content = render.request_success()
+            return render.base_clean(content)
+        else:
+            f = request_code_form()
+            content = render.activation_failed(f)
+            return render.base_clean(content)
+
+    def POST(self):
+        f = request_code_form()
+        if not f.validates():
+            content = render.activation_failed(f)
+            return render.base_clean(content)
+        # Form returns e-mail address so we fetch the user using that.
+        user = User.get_user(email=f.email.value)
+        if not user:
+            # There's no such user, so we ask the visitor to register.
+            f.note = 'You don\'t have an account. Please <a href="/register">register</a> first.'
+            content = render.activation_failed(f)
+            return render.base_clean(content)
+        # Assign new activation code
+        code = user.set_activation()
+        user.store()
+        # Send out the new activation e-mail
+        user.send_email(subject = web.config.authmail['activation_subject'],
+                        message = render.activation_email().__unicode__(),
+                        username = user.username,
+                        email = user.email,
+                        url = code)
+        raise web.seeother('/activate/request_code?status=done')
+        content = render.request_success()
+        return render.base_clean(content)
 
 app = web.application(urls, globals())
 
