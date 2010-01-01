@@ -530,3 +530,10 @@ def test_interaction_past_deadline():
     user.set_activation()
     time.sleep(2)
     assert not user.is_interaction_timely('a', 1)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.UserInteractionError)
+def test_interaction_with_wrong_type():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    user.is_interaction_timely('r', 10)
