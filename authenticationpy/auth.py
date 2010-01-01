@@ -182,9 +182,9 @@ class User(object):
         is raised.
 
         This method registers the type of the interaction, as well as the time
-        of registration, and action code. Those pieces of information are
-        stored in ``_act_type``, ``_act_time``, and ``_act_code`` properties
-        respectively.
+        of registration, and action code, and returns the activation code. 
+        Those pieces of information are stored in ``_act_type``, ``_act_time``, 
+        and ``_act_code`` properties respectively.
 
         """
 
@@ -192,6 +192,7 @@ class User(object):
             raise ValueError("Interaction type must be 'activate', 'delete', or 'reset'.")
         self._act_time, self._act_code = _generate_interaction_code(self.username)
         self._act_type = type[:1]
+        return self._act_code
 
     def set_activation(self):
         """ Activation wrapper for ``set_interaction`` """
