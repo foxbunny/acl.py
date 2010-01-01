@@ -165,7 +165,7 @@ class User(object):
         if name in ['username', 'email', 'password', 'active']:
             self._dirty_fields.append((name, name))
 
-        if name in ['_act_code', '_del_code', '_pwd_code', '_pending_pwd']:
+        if name in ['_act_code', '_act_time', '_act_type', '_pending_pwd']:
             self._dirty_fields.append((name, name[1:]))
 
         # no errors so far, so go ahead and assign
