@@ -204,7 +204,7 @@ class User(object):
 
     def set_reset(self):
         """ Reset confirmation wrapper for ``set_interaction`` """
-        self.set_interaction('r')
+        return self.set_interaction('r')
 
     def clear_interaction(self):
         """ Clears all interaction-related data """
