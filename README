@@ -73,8 +73,9 @@ To create a user, you can use the ``User`` class from the
 specify the three required properties::
 
    >>> from authenticationpy.auth import User
-   >>> user = User(username='myuser', password='clear-text password,
-                   email='user@someserver.com')
+   >>> user = User(username='myuser'
+   ...             email='user@someserver.com')
+   >>> user.password = 'clear-text password'
    >>> user.create()
 
 A user account is not atomatically activated after creation. The ``activate``
@@ -88,8 +89,8 @@ activation message::
 
    >>> from authenticationpy.auth import User
    >>> user = User(username="myuser",
-   ...            password="clear-text password",
    ...            email="user@someserver.com")
+   >>> user.password = 'clear-text password'
    >>> user.create(message="""
                    Please activate your account at
                    http://mysite.com/activate/$url
