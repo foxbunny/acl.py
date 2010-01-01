@@ -200,7 +200,7 @@ class User(object):
 
     def set_delete(self):
         """ Delete confirmation wrapper for ``set_interaction`` """
-        self.set_interaction('d')
+        return self.set_interaction('d')
 
     def set_reset(self):
         """ Reset confirmation wrapper for ``set_interaction`` """
