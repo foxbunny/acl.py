@@ -231,6 +231,9 @@ class User(object):
         
         """
 
+        if self._act_type is None:
+            raise UserInteractionError("There is no registered action.")
+
         if not type[:1] == self._act_type:
             raise UserInteractionError("Action '%s' is not registered." % type)
 
