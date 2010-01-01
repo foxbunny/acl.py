@@ -1,3 +1,6 @@
+import datetime
+import time
+
 import web
 from nose.tools import *
 
@@ -31,9 +34,9 @@ def setup_table():
                      email            VARCHAR(80) NOT NULL UNIQUE,
                      password         CHAR(81) NOT NULL,
                      pending_pwd      CHAR(81),
-                     act_code         CHAR(92),
-                     del_code         CHAR(92),
-                     pwd_code         CHAR(92), 
+                     act_code         CHAR(64),
+                     act_time         TIMESTAMP,
+                     act_type         CHAR(1),
                      registered_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                      active           BOOLEAN DEFAULT 'false' 
                    );
@@ -148,7 +151,7 @@ def test_activation_withut_email():
 def test_create_with_email_sets_act_code():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create(message='This is an activation mail')
-    assert len(user._act_code) == 92
+    assert len(user._act_code) == 64
 
 @with_setup(setup=setup_table, teardown=teardown_table)
 def test_activation_code_in_db():
@@ -351,7 +354,7 @@ def test_reset_password_with_confirmation_reset_code():
     user = auth.User.get_user(username='myuser')
     user.reset_password('123abc', 
                         message='Please visit http://mysite.com/confirm/$url')
-    assert len(user._pwd_code) == 92
+    assert len(user._act_code) == 64
 
 @with_setup(setup=setup_table, teardown=teardown_table)
 def test_reset_password_with_confirmation():
@@ -431,7 +434,7 @@ def test_delete_user_with_confirmation():
     auth.User.delete(username='myuser',
                      message='Click http://mysite.com/delete/$url to confirm')
     user = auth.User.get_user(username='myuser')
-    assert len(user._del_code) == 92
+    assert len(user._act_code) == 64
 
 @with_setup(setup=setup_table, teardown=teardown_table)
 def test_delete_user_with_confirmation_no_message():
@@ -468,3 +471,105 @@ def test_suspend_with_message():
     auth.User.suspend(username='myuser', message='Your account was suspended')
     user = auth.User.get_user(username='myuser')
     user.authenticate('abc123')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_set_interaction_sets_act_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_interaction('activate')
+    assert len(user._act_code) == 64
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_set_interaction_sets_act_time():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_interaction('activate')
+    assert type(user._act_time) == datetime.datetime
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_set_interaction_sets_act_type():
+    for type in [('activate', 'a'), ('delete', 'd'), ('reset', 'r')]:
+        yield check_act_type, type
+
+def check_act_type(type):
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_interaction(type[0])
+    assert user._act_type == type[1]
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(ValueError)
+def test_wrong_interaction_type():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_interaction('bogus')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_activation_interaction():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    assert user._act_type == 'a'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_delete_interaction():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_delete()
+    assert user._act_type == 'd'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_reset_interaction():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_reset()
+    assert user._act_type == 'r'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_interaction_timeout():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    assert user.is_interaction_timely(type='a', deadline=10)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_interaction_past_deadline():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    time.sleep(2)
+    assert not user.is_interaction_timely('a', 1)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.UserInteractionError)
+def test_interaction_with_wrong_type():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    user.is_interaction_timely('r', 10)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.UserInteractionError)
+def test_interaction_timely_when_no_interaction():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.is_interaction_timely('a', 10)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_interaction_data_stored_properly():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    assert user._act_type == 'a'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_clear_interaction_clears_act_type():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    user.clear_interaction()
+    assert user._act_type is None
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_get_user_by_action_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    user.create()
+    same_user = auth.User.get_user_by_act_code(user._act_code)
+    assert same_user.username == 'myuser'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.UserAccountError)
+def test_get_user_by_action_code_with_wrong_code():
+    auth.User.get_user_by_act_code('bogus code')

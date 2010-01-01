@@ -77,9 +77,10 @@ def _generate_interaction_code(username):
 
     """
 
-    timestamp = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%s')
+    timestamp = datetime.datetime.now()
+    formatted_timestamp = timestamp.strftime('%Y%m%d%H%M%s')
     hexdigest = hashlib.sha256('%s%s' % (username, timestamp)).hexdigest()
-    return ('%s$%s' % (timestamp, hexdigest), hexdigest)
+    return (timestamp, hexdigest)
 
 
 class UserError(Exception):
@@ -95,6 +96,10 @@ class DuplicateUserError(UserError):
 
 
 class DuplicateEmailError(UserError):
+    pass
+
+
+class UserInteractionError(UserError):
     pass
 
 
@@ -122,8 +127,8 @@ class User(object):
         object.__setattr__(self, 'registered_at', None)
         object.__setattr__(self, 'active', False)
         object.__setattr__(self, '_act_code', None)
-        object.__setattr__(self, '_del_code', None)
-        object.__setattr__(self, '_pwd_code', None)
+        object.__setattr__(self, '_act_time', None)
+        object.__setattr__(self, '_act_type', None)
         object.__setattr__(self, '_cleartext', None)
         object.__setattr__(self, '_account_id', None)
         object.__setattr__(self, '_dirty_fields', [])
@@ -134,14 +139,7 @@ class User(object):
 
         # Reset ``_dirty_fields`` so it's empty after initialization
         object.__setattr__(self, '_dirty_fields', [])
-       
-    @classmethod
-    def _validate_username(cls, username):
-        return username_re.match(username)
 
-    @classmethod
-    def _validate_email(cls, email):
-        return email_re.match(email)
 
     def __setattr__(self, name, value):
         if name == 'username':
@@ -164,11 +162,85 @@ class User(object):
         if name in ['username', 'email', 'password', 'active']:
             self._dirty_fields.append((name, name))
 
-        if name in ['_act_code', '_del_code', '_pwd_code', '_pending_pwd']:
+        if name in ['_act_code', '_act_time', '_act_type', '_pending_pwd']:
             self._dirty_fields.append((name, name[1:]))
 
         # no errors so far, so go ahead and assign
         object.__setattr__(self, name, value)
+
+    def set_interaction(self, type):
+        """ Sets interaction data
+
+        The only required argument is ``type``, which must be one of the
+        following:
+
+        * 'activate' ('a' for short)
+        * 'delete' ('d' for short)
+        * 'reset' ('r' for short)
+
+        If the ``type`` doesn't match any of the allowed values, ``ValueError``
+        is raised.
+
+        This method registers the type of the interaction, as well as the time
+        of registration, and action code. Those pieces of information are
+        stored in ``_act_type``, ``_act_time``, and ``_act_code`` properties
+        respectively.
+
+        """
+
+        if not type in ['activate', 'delete', 'reset', 'a', 'd', 'r']:
+            raise ValueError("Interaction type must be 'activate', 'delete', or 'reset'.")
+        self._act_time, self._act_code = _generate_interaction_code(self.username)
+        self._act_type = type[:1]
+
+    def set_activation(self):
+        """ Activation wrapper for ``set_interaction`` """
+        self.set_interaction('a')
+
+    def set_delete(self):
+        """ Delete confirmation wrapper for ``set_interaction`` """
+        self.set_interaction('d')
+
+    def set_reset(self):
+        """ Reset confirmation wrapper for ``set_interaction`` """
+        self.set_interaction('r')
+
+    def clear_interaction(self):
+        """ Clears all interaction-related data """
+        self._act_type = None
+        self._act_time = None
+        self._act_code = None
+
+    def is_interaction_timely(self, type, deadline):
+        """ Tests whether user action was performed on time 
+        
+        Required arguments are:
+
+        * ``type``: type of interaction user was supposed to perform
+        * ``deadline``: the original deadline in seconds
+
+        ``type`` value should be one of the types used for ``set_interaction``
+        method.
+
+        If type does not match the type of outstanding interaction,
+        ``UserInteractionError`` is raised.
+
+        If use met the deadline, ``True`` is returned, and ``False`` is
+        returned otherwise. Deadline is counted from the time action was
+        registered using ``set_interaction`` or any of its wrappers.
+        
+        """
+
+        if self._act_type is None:
+            raise UserInteractionError("There is no registered action.")
+
+        if not type[:1] == self._act_type:
+            raise UserInteractionError("Action '%s' is not registered." % type)
+
+        now_time = datetime.datetime.now()
+        deadline_time = self._act_time + datetime.timedelta(seconds=deadline)
+
+        return now_time < deadline_time
 
     def create(self, message=None, activated=False):
         """ Stores a new user optionally gerating a password 
@@ -213,13 +285,14 @@ class User(object):
             self.activate()
         
         if message:
-            self._act_code, act_code = _generate_interaction_code(self.username)
+            self._act_time, self._act_code = _generate_interaction_code(self.username)
+            self._act_type = 'a' # 'a' for activate
             self.send_email(message=message,
                             subject=act_subject,
                             username=self.username,
                             email=self.email,
                             password=self._cleartext,
-                            url=act_code)
+                            url=self._act_code)
         self.store()
 
     def store(self):
@@ -228,6 +301,8 @@ class User(object):
             transaction = db.transaction()
             try:
                 if self._new_account:
+                    if not self.password:
+                        raise UserAccountError('Password cannot be blank.')
                     db.insert(TABLE, **self._data_to_insert)
                 else:
                     db.update(TABLE, where='id = $id',
@@ -242,85 +317,8 @@ class User(object):
         # nothing to store
         pass
 
-    @property
-    def _data_to_insert(self):
-        """ Returns a dictionary of data to insert """
-        insert_dict = {'username': self.username,
-                       'email': self.email,
-                       'password': self.password,
-                       'active': self.active}
-        if self._act_code:
-            insert_dict['act_code'] = self._act_code
-        return insert_dict
-
-    @property
-    def _data_to_store(self):
-        """ Returns a dictionary of dirty field names and values """
-        store_dict = {}
-        for field in self._dirty_fields:
-            store_dict[field[1]] = self.__dict__[field[0]]
-        return store_dict
-
     def activate(self):
         self.active = True
-
-    @classmethod
-    def delete(cls, username=None, email=None, message=None, confirmation=None):
-        """ Deletes user account optionally sending an e-mail
-
-        You must supply either ``username`` or ``email`` arguments to delete a
-        user account. In case either of the required arguments are missing,
-        ``UserAccountError`` is raised.
-
-        If you specify a ``message`` argument, the user account is not deleted,
-        but an e-mail is sent to the user. The ``message`` template may contain
-        the following template variables in ``$varname`` form:
-
-        * ``$username``: account's username
-        * ``$email``: user's e-mail address
-        * ``$url``: account removal confirmation URL suffix
-
-        You can use the optional ``confirmation`` argument to disable user
-        account deletion even if the ``message`` argument is missing, in cases
-        where you have a confirmation mechanism of your own. You can also use
-        the ``confirmation`` argument to force account removal even if you
-        specify the ``message``.
-
-        The default value of ``confirmation`` argument is ``False``, but it
-        defaults to ``True`` if ``message`` argument is used.
-
-        """
-
-        if username is None and email is None:
-            raise UserAccountError('No user information for deletion.')
-       
-        delete_dict = {}
-
-        if username:
-            delete_dict['username'] = username
-
-        if email:
-            delete_dict['email'] = email
-
-        if confirmation is None and message:
-            confirmation = True
-
-        if message:
-            if username:
-                user = cls.get_user(username=username)
-            else:
-                user = cls.get_user(email=email)
-
-            user._del_code, del_code = _generate_interaction_code(username)
-            user.send_email(message=message,
-                            subject=del_subject,
-                            username=user.username,
-                            email=user.email,
-                            url=del_code)
-            user.store()
-        
-        if not confirmation:
-            db.delete(TABLE, where=web.db.sqlwhere(delete_dict))
 
     def authenticate(self, password):
         """ Test ``password`` and return boolean success status """
@@ -369,13 +367,14 @@ class User(object):
             self.password = password
 
         if message:
-            self._pwd_code, pwd_code = _generate_interaction_code(self.username)
+            self._act_time, self._act_code = _generate_interaction_code(self.username)
+            self._act_type = 'p' # 'p' for password reset
             self.send_email(message=message,
                             subject=rst_subject,
                             username=self.username,
                             email=self.email,
                             password=self._cleartext,
-                            url=pwd_code)
+                            url=self._act_code)
 
         self.store()
 
@@ -441,10 +440,98 @@ class User(object):
             pass
 
     @property
+    def _data_to_insert(self):
+        """ Returns a dictionary of data to insert """
+        insert_dict = {'username': self.username,
+                       'email': self.email,
+                       'password': self.password,
+                       'active': self.active}
+        if self._act_code:
+            insert_dict['act_code'] = self._act_code
+            insert_dict['act_time'] = self._act_time
+            insert_dict['act_type'] = self._act_type
+        return insert_dict
+
+    @property
+    def _data_to_store(self):
+        """ Returns a dictionary of dirty field names and values """
+        store_dict = {}
+        for field in self._dirty_fields:
+            store_dict[field[1]] = self.__dict__[field[0]]
+        return store_dict
+
+    @property
     def _new_account(self):
         if self._account_id:
             return False
         return True
+       
+    @classmethod
+    def _validate_username(cls, username):
+        return username_re.match(username)
+
+    @classmethod
+    def _validate_email(cls, email):
+        return email_re.match(email)
+
+    @classmethod
+    def delete(cls, username=None, email=None, message=None, confirmation=None):
+        """ Deletes user account optionally sending an e-mail
+
+        You must supply either ``username`` or ``email`` arguments to delete a
+        user account. In case either of the required arguments are missing,
+        ``UserAccountError`` is raised.
+
+        If you specify a ``message`` argument, the user account is not deleted,
+        but an e-mail is sent to the user. The ``message`` template may contain
+        the following template variables in ``$varname`` form:
+
+        * ``$username``: account's username
+        * ``$email``: user's e-mail address
+        * ``$url``: account removal confirmation URL suffix
+
+        You can use the optional ``confirmation`` argument to disable user
+        account deletion even if the ``message`` argument is missing, in cases
+        where you have a confirmation mechanism of your own. You can also use
+        the ``confirmation`` argument to force account removal even if you
+        specify the ``message``.
+
+        The default value of ``confirmation`` argument is ``False``, but it
+        defaults to ``True`` if ``message`` argument is used.
+
+        """
+
+        if username is None and email is None:
+            raise UserAccountError('No user information for deletion.')
+       
+        delete_dict = {}
+
+        if username:
+            delete_dict['username'] = username
+
+        if email:
+            delete_dict['email'] = email
+
+        if confirmation is None and message:
+            confirmation = True
+
+        if message:
+            if username:
+                user = cls.get_user(username=username)
+            else:
+                user = cls.get_user(email=email)
+
+            user._act_time, user._act_code = _generate_interaction_code(username)
+            user._act_type = 'd' # 'd' for delete
+            user.send_email(message=message,
+                            subject=del_subject,
+                            username=user.username,
+                            email=user.email,
+                            url=user._act_code)
+            user.store()
+        
+        if not confirmation:
+            db.delete(TABLE, where=web.db.sqlwhere(delete_dict))
 
     @classmethod
     def suspend(cls, username=None, email=None, message=None):
@@ -524,11 +611,30 @@ class User(object):
         
         records = db.where(TABLE, **select_dict)
 
-        if len(records) == 0:
+        if not records:
             # There is nothing to return
             return None
+
+        return cls._map_user_properties(records[0])
+
+    @classmethod
+    def get_user_by_act_code(cls, act_code):
+        """ Gets a user account by interaction code """
+        if not re.match(r'^[a-f0-9]{64}$', act_code):
+            raise UserAccountError('Action code is not the right format.')
+
+        records = db.where(TABLE, act_code=act_code)
         
-        user_account = records[0]
+        if not records:
+            # There is nothing to return
+            return None
+
+        return cls._map_user_properties(records[0])
+
+    @classmethod
+    def _map_user_properties(cls, user_account):
+        """ Maps user records to instance properties """
+
         try:
             user_username = user_account.username
             user_email = user_account.email
@@ -537,8 +643,8 @@ class User(object):
                 'password': user_account.password,
                 '_pending_pwd': user_account.pending_pwd,
                 '_act_code': user_account.act_code,
-                '_del_code': user_account.del_code,
-                '_pwd_code': user_account.pwd_code,
+                '_act_time': user_account.act_time,
+                '_act_type': user_account.act_type,
                 'registered_at': user_account.registered_at,
                 'active': user_account.active,
             }
