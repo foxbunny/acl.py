@@ -618,6 +618,17 @@ class User(object):
         return cls._map_user_properties(records[0])
 
     @classmethod
+    def get_user_by_act_code(cls, act_code):
+        """ Gets a user account by interaction code """
+        records = db.where(TABLE, act_code=act_code)
+        
+        if not records:
+            # There is nothing to return
+            return None
+
+        return cls._map_user_properties(records[0])
+
+    @classmethod
     def _map_user_properties(cls, user_account):
         """ Maps user records to instance properties """
 
