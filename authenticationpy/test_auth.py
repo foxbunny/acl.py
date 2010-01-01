@@ -493,3 +493,8 @@ def check_act_type(type):
     user.set_interaction(type[0])
     assert user._act_type == type[1]
 
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(ValueError)
+def test_wront_interaction_type():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_interaction('bogus')
