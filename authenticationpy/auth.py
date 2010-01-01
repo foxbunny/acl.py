@@ -205,6 +205,12 @@ class User(object):
         """ Reset confirmation wrapper for ``set_interaction`` """
         self.set_interaction('r')
 
+    def clear_interaction(self):
+        """ Clears all interaction-related data """
+        self._act_type = None
+        self._act_time = None
+        self._act_code = None
+
     def is_interaction_timely(self, type, deadline):
         """ Tests whether user action was performed on time 
         
