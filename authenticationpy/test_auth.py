@@ -537,3 +537,11 @@ def test_interaction_with_wrong_type():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_activation()
     user.is_interaction_timely('r', 10)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_interaction_data_stored_properly():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    assert user._act_type == 'a'
