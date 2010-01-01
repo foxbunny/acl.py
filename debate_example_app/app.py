@@ -69,24 +69,29 @@ class activate:
             user = User.get_user_by_act_code(code)
         except UserAccountError:
             # Activation code is not valid format
-            return render.activation_failed()
+            return self.render_failed()
 
         if not user:
             # No account matches the code
-            return render.activation_failed()
+            return self.render_failed()
 
         deadline = 172800 # 48 hours in seconds
 
         if not user.is_interaction_timely('activation', deadline):
             # User took too long to activate
-            return render.activation_failed()
+            return self.render_failed()
 
         # Seems like activation was successful, let's clear interaction data
         user.clear_interaction()
         user.store()
 
-        return render.activation_success()
+        content = render.activation_success()
+        return render.base_clean(content)
 
+    def render_failed(self):
+        f = request_code_form()
+        content = render.activation_failed(f)
+        return render.base_clean(content)
 
 class request_code:
     def GET(self):
