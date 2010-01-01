@@ -286,8 +286,7 @@ class User(object):
             self.activate()
         
         if message:
-            self._act_time, self._act_code = _generate_interaction_code(self.username)
-            self._act_type = 'a' # 'a' for activate
+            self.set_activation()
             self.send_email(message=message,
                             subject=act_subject,
                             username=self.username,
@@ -368,8 +367,7 @@ class User(object):
             self.password = password
 
         if message:
-            self._act_time, self._act_code = _generate_interaction_code(self.username)
-            self._act_type = 'p' # 'p' for password reset
+            self.set_reset()
             self.send_email(message=message,
                             subject=rst_subject,
                             username=self.username,
@@ -522,8 +520,7 @@ class User(object):
             else:
                 user = cls.get_user(email=email)
 
-            user._act_time, user._act_code = _generate_interaction_code(username)
-            user._act_type = 'd' # 'd' for delete
+            self.set_delete()
             user.send_email(message=message,
                             subject=del_subject,
                             username=user.username,
