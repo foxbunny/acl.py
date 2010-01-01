@@ -8,7 +8,7 @@ from auth_forms import login_form, register_form, request_code_form
 urls = (
     '/', 'debates',
     '/new', 'new_debate',
-    '/([\w_]+/', 'debate',
+    '/([\w_]+)/', 'debate',
     '/([\w_]+)/delete', 'delete_debate',
     '/([\w_]+)/arguments/(.*)/', 'argument',
     '/([\w_]+)/arguments/(.*)/delete', 'delete_argument',
@@ -17,7 +17,7 @@ urls = (
     '/register', 'register',
     '/unregister', 'unregister',
     '/activate/([a-f0-9]{64})', 'activate',
-    '/activate/request_code/(.*)', 'request_code',
+    '/activate/request_code', 'request_code',
 )
 
 render = web.template.render('templates')
