@@ -54,7 +54,7 @@ class register:
                     email=f.email.value)
         user.password = f.password.value
         try:
-            user.create(message=render.activation_email())
+            user.create(message=render.activation_email().__unicode__())
         except UserAccountError:
             f.note = 'You cannot register using this username or e-mail'
             content = render.register_page(f)
