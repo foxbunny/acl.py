@@ -292,6 +292,8 @@ class User(object):
             transaction = db.transaction()
             try:
                 if self._new_account:
+                    if not self.password:
+                        raise UserAccountError('Password cannot be blank.')
                     db.insert(TABLE, **self._data_to_insert)
                 else:
                     db.update(TABLE, where='id = $id',
