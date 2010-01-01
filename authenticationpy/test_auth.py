@@ -513,6 +513,12 @@ def test_wrapper_activation_interaction():
     assert user._act_type == 'a'
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_activation_returns_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    code = user.set_activation()
+    assert code == user._act_code
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_wrapper_delete_interaction():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_delete()
