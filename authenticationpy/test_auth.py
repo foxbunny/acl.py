@@ -539,6 +539,12 @@ def test_interaction_with_wrong_type():
     user.is_interaction_timely('r', 10)
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.UserInteractionError)
+def test_interaction_timely_when_no_interaction():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.is_interaction_timely('a', 10)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_interaction_data_stored_properly():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_activation()
