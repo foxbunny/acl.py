@@ -77,9 +77,10 @@ def _generate_interaction_code(username):
 
     """
 
-    timestamp = datetime.datetime.now().strftime('%Y_%m_%d_%H_%M_%s')
+    timestamp = datetime.datetime.now()
+    formatted_timestamp = timestamp.strftime('%Y%m%d%H%M%s')
     hexdigest = hashlib.sha256('%s%s' % (username, timestamp)).hexdigest()
-    return ('%s$%s' % (timestamp, hexdigest), hexdigest)
+    return (timestamp, hexdigest)
 
 
 class UserError(Exception):
