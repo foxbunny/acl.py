@@ -568,3 +568,8 @@ def test_get_user_by_action_code():
     user.create()
     same_user = auth.User.get_user_by_act_code(user._act_code)
     assert same_user.username == 'myuser'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+@raises(auth.UserAccountError)
+def test_get_user_by_action_code_with_wrong_code():
+    auth.User.get_user_by_act_code('bogus code')
