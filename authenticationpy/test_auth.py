@@ -498,3 +498,9 @@ def check_act_type(type):
 def test_wrong_interaction_type():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_interaction('bogus')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_activation_interaction():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    assert user._act_type == 'a'
