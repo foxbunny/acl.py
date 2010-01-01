@@ -495,6 +495,12 @@ def check_act_type(type):
     assert user._act_type == type[1]
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_set_interaction_returns_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    code = user.set_interaction('a')
+    assert code == user._act_code
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 @raises(ValueError)
 def test_wrong_interaction_type():
     user = auth.User(username='myuser', email='valid@email.com')
@@ -507,16 +513,34 @@ def test_wrapper_activation_interaction():
     assert user._act_type == 'a'
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_activation_returns_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    code = user.set_activation()
+    assert code == user._act_code
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_wrapper_delete_interaction():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_delete()
     assert user._act_type == 'd'
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_delete_returns_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    code = user.set_delete()
+    assert code == user._act_code
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_wrapper_reset_interaction():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_reset()
     assert user._act_type == 'r'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_reset_returns_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    code = user.set_reset()
+    assert code == user._act_code
 
 @with_setup(setup=setup_table, teardown=teardown_table)
 def test_interaction_timeout():

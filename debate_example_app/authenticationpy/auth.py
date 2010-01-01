@@ -182,9 +182,9 @@ class User(object):
         is raised.
 
         This method registers the type of the interaction, as well as the time
-        of registration, and action code. Those pieces of information are
-        stored in ``_act_type``, ``_act_time``, and ``_act_code`` properties
-        respectively.
+        of registration, and action code, and returns the activation code. 
+        Those pieces of information are stored in ``_act_type``, ``_act_time``, 
+        and ``_act_code`` properties respectively.
 
         """
 
@@ -192,18 +192,19 @@ class User(object):
             raise ValueError("Interaction type must be 'activate', 'delete', or 'reset'.")
         self._act_time, self._act_code = _generate_interaction_code(self.username)
         self._act_type = type[:1]
+        return self._act_code
 
     def set_activation(self):
         """ Activation wrapper for ``set_interaction`` """
-        self.set_interaction('a')
+        return self.set_interaction('a')
 
     def set_delete(self):
         """ Delete confirmation wrapper for ``set_interaction`` """
-        self.set_interaction('d')
+        return self.set_interaction('d')
 
     def set_reset(self):
         """ Reset confirmation wrapper for ``set_interaction`` """
-        self.set_interaction('r')
+        return self.set_interaction('r')
 
     def clear_interaction(self):
         """ Clears all interaction-related data """
@@ -285,8 +286,7 @@ class User(object):
             self.activate()
         
         if message:
-            self._act_time, self._act_code = _generate_interaction_code(self.username)
-            self._act_type = 'a' # 'a' for activate
+            self.set_activation()
             self.send_email(message=message,
                             subject=act_subject,
                             username=self.username,
@@ -318,6 +318,7 @@ class User(object):
         pass
 
     def activate(self):
+        self.clear_interaction()
         self.active = True
 
     def authenticate(self, password):
@@ -367,8 +368,7 @@ class User(object):
             self.password = password
 
         if message:
-            self._act_time, self._act_code = _generate_interaction_code(self.username)
-            self._act_type = 'p' # 'p' for password reset
+            self.set_reset()
             self.send_email(message=message,
                             subject=rst_subject,
                             username=self.username,
@@ -380,6 +380,7 @@ class User(object):
 
     def confirm_reset(self):
         """ Assign pending password as new """
+        self.clear_interaction()
         object.__setattr__(self, 'password', self._pending_pwd)
         object.__setattr__(self, '_pending_pwd', None)
         self._dirty_fields.extend([('password', 'password'), 
@@ -521,8 +522,7 @@ class User(object):
             else:
                 user = cls.get_user(email=email)
 
-            user._act_time, user._act_code = _generate_interaction_code(username)
-            user._act_type = 'd' # 'd' for delete
+            self.set_delete()
             user.send_email(message=message,
                             subject=del_subject,
                             username=user.username,
