@@ -545,3 +545,12 @@ def test_interaction_data_stored_properly():
     user.create()
     user = auth.User.get_user(username='myuser')
     assert user._act_type == 'a'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_clear_interaction_clears_act_type():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    user.clear_interaction()
+    assert user._act_type is None
