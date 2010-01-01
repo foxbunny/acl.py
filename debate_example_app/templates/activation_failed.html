@@ -1,0 +1,24 @@
+$def with (form)
+
+<h1>Activation failed</h1>
+
+<p>
+Your activation link has expired or it is invalid. If you haven't activated your account yet, you may request a new link by using the form below.
+</p>
+
+$if form.note:
+    <p>
+    $:form.rendernote()
+    </p>
+
+<form action="/activate/request_code" method="post">
+    <p>
+    <label for="email">Your e-mail address: </label>
+    $:form.email.render()
+    <input type="submit" name="submit" value="Submit" />
+    </p>
+    $if form.email.note:
+        <p>
+        <strong>$form.email.note</strong>
+        </p>
+</form>
