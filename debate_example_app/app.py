@@ -16,6 +16,8 @@ urls = (
     '/logoff', 'logoff',
     '/register', 'register',
     '/unregister', 'unregister',
+    '/activate/([a-f0-9]{64})', 'activate',
+    '/activate/request_code/(.*)', 'request_code',
 )
 
 render = web.template.render('templates')
