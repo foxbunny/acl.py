@@ -81,8 +81,8 @@ class activate:
             # User took too long to activate
             return self.render_failed()
 
-        # Seems like activation was successful, let's clear interaction data
-        user.clear_interaction()
+        # Seems like activation was successful, let's activate the user
+        user.activate()
         user.store()
 
         content = render.activation_success()
