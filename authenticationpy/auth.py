@@ -135,14 +135,7 @@ class User(object):
 
         # Reset ``_dirty_fields`` so it's empty after initialization
         object.__setattr__(self, '_dirty_fields', [])
-       
-    @classmethod
-    def _validate_username(cls, username):
-        return username_re.match(username)
 
-    @classmethod
-    def _validate_email(cls, email):
-        return email_re.match(email)
 
     def __setattr__(self, name, value):
         if name == 'username':
@@ -244,88 +237,8 @@ class User(object):
         # nothing to store
         pass
 
-    @property
-    def _data_to_insert(self):
-        """ Returns a dictionary of data to insert """
-        insert_dict = {'username': self.username,
-                       'email': self.email,
-                       'password': self.password,
-                       'active': self.active}
-        if self._act_code:
-            insert_dict['act_code'] = self._act_code
-            insert_dict['act_time'] = self._act_time
-            insert_dict['act_type'] = self._act_type
-        return insert_dict
-
-    @property
-    def _data_to_store(self):
-        """ Returns a dictionary of dirty field names and values """
-        store_dict = {}
-        for field in self._dirty_fields:
-            store_dict[field[1]] = self.__dict__[field[0]]
-        return store_dict
-
     def activate(self):
         self.active = True
-
-    @classmethod
-    def delete(cls, username=None, email=None, message=None, confirmation=None):
-        """ Deletes user account optionally sending an e-mail
-
-        You must supply either ``username`` or ``email`` arguments to delete a
-        user account. In case either of the required arguments are missing,
-        ``UserAccountError`` is raised.
-
-        If you specify a ``message`` argument, the user account is not deleted,
-        but an e-mail is sent to the user. The ``message`` template may contain
-        the following template variables in ``$varname`` form:
-
-        * ``$username``: account's username
-        * ``$email``: user's e-mail address
-        * ``$url``: account removal confirmation URL suffix
-
-        You can use the optional ``confirmation`` argument to disable user
-        account deletion even if the ``message`` argument is missing, in cases
-        where you have a confirmation mechanism of your own. You can also use
-        the ``confirmation`` argument to force account removal even if you
-        specify the ``message``.
-
-        The default value of ``confirmation`` argument is ``False``, but it
-        defaults to ``True`` if ``message`` argument is used.
-
-        """
-
-        if username is None and email is None:
-            raise UserAccountError('No user information for deletion.')
-       
-        delete_dict = {}
-
-        if username:
-            delete_dict['username'] = username
-
-        if email:
-            delete_dict['email'] = email
-
-        if confirmation is None and message:
-            confirmation = True
-
-        if message:
-            if username:
-                user = cls.get_user(username=username)
-            else:
-                user = cls.get_user(email=email)
-
-            user._act_time, user._act_code = _generate_interaction_code(username)
-            user._act_type = 'd' # 'd' for delete
-            user.send_email(message=message,
-                            subject=del_subject,
-                            username=user.username,
-                            email=user.email,
-                            url=user._act_code)
-            user.store()
-        
-        if not confirmation:
-            db.delete(TABLE, where=web.db.sqlwhere(delete_dict))
 
     def authenticate(self, password):
         """ Test ``password`` and return boolean success status """
@@ -447,10 +360,98 @@ class User(object):
             pass
 
     @property
+    def _data_to_insert(self):
+        """ Returns a dictionary of data to insert """
+        insert_dict = {'username': self.username,
+                       'email': self.email,
+                       'password': self.password,
+                       'active': self.active}
+        if self._act_code:
+            insert_dict['act_code'] = self._act_code
+            insert_dict['act_time'] = self._act_time
+            insert_dict['act_type'] = self._act_type
+        return insert_dict
+
+    @property
+    def _data_to_store(self):
+        """ Returns a dictionary of dirty field names and values """
+        store_dict = {}
+        for field in self._dirty_fields:
+            store_dict[field[1]] = self.__dict__[field[0]]
+        return store_dict
+
+    @property
     def _new_account(self):
         if self._account_id:
             return False
         return True
+       
+    @classmethod
+    def _validate_username(cls, username):
+        return username_re.match(username)
+
+    @classmethod
+    def _validate_email(cls, email):
+        return email_re.match(email)
+
+    @classmethod
+    def delete(cls, username=None, email=None, message=None, confirmation=None):
+        """ Deletes user account optionally sending an e-mail
+
+        You must supply either ``username`` or ``email`` arguments to delete a
+        user account. In case either of the required arguments are missing,
+        ``UserAccountError`` is raised.
+
+        If you specify a ``message`` argument, the user account is not deleted,
+        but an e-mail is sent to the user. The ``message`` template may contain
+        the following template variables in ``$varname`` form:
+
+        * ``$username``: account's username
+        * ``$email``: user's e-mail address
+        * ``$url``: account removal confirmation URL suffix
+
+        You can use the optional ``confirmation`` argument to disable user
+        account deletion even if the ``message`` argument is missing, in cases
+        where you have a confirmation mechanism of your own. You can also use
+        the ``confirmation`` argument to force account removal even if you
+        specify the ``message``.
+
+        The default value of ``confirmation`` argument is ``False``, but it
+        defaults to ``True`` if ``message`` argument is used.
+
+        """
+
+        if username is None and email is None:
+            raise UserAccountError('No user information for deletion.')
+       
+        delete_dict = {}
+
+        if username:
+            delete_dict['username'] = username
+
+        if email:
+            delete_dict['email'] = email
+
+        if confirmation is None and message:
+            confirmation = True
+
+        if message:
+            if username:
+                user = cls.get_user(username=username)
+            else:
+                user = cls.get_user(email=email)
+
+            user._act_time, user._act_code = _generate_interaction_code(username)
+            user._act_type = 'd' # 'd' for delete
+            user.send_email(message=message,
+                            subject=del_subject,
+                            username=user.username,
+                            email=user.email,
+                            url=user._act_code)
+            user.store()
+        
+        if not confirmation:
+            db.delete(TABLE, where=web.db.sqlwhere(delete_dict))
 
     @classmethod
     def suspend(cls, username=None, email=None, message=None):
