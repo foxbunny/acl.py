@@ -318,6 +318,7 @@ class User(object):
         pass
 
     def activate(self):
+        self.clear_interaction()
         self.active = True
 
     def authenticate(self, password):
