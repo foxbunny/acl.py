@@ -525,6 +525,12 @@ def test_wrapper_delete_interaction():
     assert user._act_type == 'd'
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_delete_returns_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    code = user.set_delete()
+    assert code == user._act_code
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_wrapper_reset_interaction():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_reset()
