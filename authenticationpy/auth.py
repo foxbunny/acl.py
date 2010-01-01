@@ -205,6 +205,34 @@ class User(object):
         """ Reset confirmation wrapper for ``set_interaction`` """
         self.set_interaction('r')
 
+    def is_interaction_timely(self, type, deadline):
+        """ Tests whether user action was performed on time 
+        
+        Required arguments are:
+
+        * ``type``: type of interaction user was supposed to perform
+        * ``deadline``: the original deadline in seconds
+
+        ``type`` value should be one of the types used for ``set_interaction``
+        method.
+
+        If type does not match the type of outstanding interaction,
+        ``UserInteractionError`` is raised.
+
+        If use met the deadline, ``True`` is returned, and ``False`` is
+        returned otherwise. Deadline is counted from the time action was
+        registered using ``set_interaction`` or any of its wrappers.
+        
+        """
+
+        if not type[:1] == self._act_type:
+            raise UserInteractionError("Action '%s' is not registered." % type)
+
+        now_time = datetime.datetime.now()
+        deadline_time = self._act_time + datetime.timedelta(seconds=deadline)
+
+        return now_time < deadline_time
+
     def create(self, message=None, activated=False):
         """ Stores a new user optionally gerating a password 
         
