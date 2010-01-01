@@ -560,3 +560,11 @@ def test_clear_interaction_clears_act_type():
     user = auth.User.get_user(username='myuser')
     user.clear_interaction()
     assert user._act_type is None
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_get_user_by_action_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_activation()
+    user.create()
+    same_user = auth.User.get_user_by_act_code(user._act_code)
+    assert same_user.username == 'myuser'
