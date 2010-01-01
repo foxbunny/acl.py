@@ -380,6 +380,7 @@ class User(object):
 
     def confirm_reset(self):
         """ Assign pending password as new """
+        self.clear_interaction()
         object.__setattr__(self, 'password', self._pending_pwd)
         object.__setattr__(self, '_pending_pwd', None)
         self._dirty_fields.extend([('password', 'password'), 
