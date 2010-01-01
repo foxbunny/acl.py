@@ -81,6 +81,15 @@ migrations = {
         );
         CREATE UNIQUE INDEX session_id_index ON sessions USING btree (session_id);
     """,
+    7.0: """
+        ALTER TABLE authenticationpy_users
+            DROP COLUMN del_code,
+            DROP COLUMN pwd_code,
+            DROP COLUMN act_code,
+            ADD COLUMN act_time TIMESTAMP,
+            ADD COLUMN act_type CHAR(1),
+            ADD COLUMN act_code CHAR(64);
+    """, # 7.0 causes data loss if previous versions already contain data
 }
 
 
