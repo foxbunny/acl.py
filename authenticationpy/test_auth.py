@@ -510,3 +510,9 @@ def test_wrapper_delete_interaction():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_delete()
     assert user._act_type == 'd'
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_reset_interaction():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.set_reset()
+    assert user._act_type == 'r'
