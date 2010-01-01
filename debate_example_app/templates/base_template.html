@@ -10,7 +10,7 @@ $def with (content, user, login_form)
     <body>
         <div id="login">
         $if user:
-            <p>Welcome, $user.username. | <a href="/logoff">Log off</a> | <a href="/unregister">Delete account</a></p>
+            <p>Welcome, $user.username. | <a href="/logoff">Log off</a> | <a href="/reset_password">Reset password</a> | <a href="/unregister">Delete account</a></p>
         $else:
             <form action="/login" method="post">
                 <a href="/login">Login:</a> 
@@ -19,6 +19,7 @@ $def with (content, user, login_form)
                 <label for="password">$login_form.password.description</label>
                 $:login_form.password.render()
                 <input type="submit" name="submit" value="Log in" />
+                | <a href="/reset_password">Forgot password</a>
                 | <a href="/register">Register</a>
             </form>
         </div>
