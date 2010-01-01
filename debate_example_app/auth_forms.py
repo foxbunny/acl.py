@@ -28,3 +28,7 @@ register_form = web.form.Form(
                            lambda i: i.password == i.confirm),
     ]
 )
+
+request_code_form = web.form.Form(
+    web.form.Textbox('email', valid_email, description='email')
+)
