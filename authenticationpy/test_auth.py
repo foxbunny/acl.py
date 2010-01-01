@@ -537,6 +537,12 @@ def test_wrapper_reset_interaction():
     assert user._act_type == 'r'
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_wrapper_reset_returns_code():
+    user = auth.User(username='myuser', email='valid@email.com')
+    code = user.set_reset()
+    assert code == user._act_code
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_interaction_timeout():
     user = auth.User(username='myuser', email='valid@email.com')
     user.set_activation()
