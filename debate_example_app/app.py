@@ -49,6 +49,8 @@ class register:
         return render.base_clean(content)
 
     def POST(self):
+        original_path = web.ctx.env.get('HTTP_REFERRER', '/')
+
         f = register_form()
         if not f.validates():
             content = render.register_page(f)
