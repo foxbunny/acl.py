@@ -64,8 +64,10 @@ class register:
             f.note = 'Minimum password length is %s characters.' % min_pwd_length
             return self.render_reg_page(f)
         
+        # Here's how to trap duplicate username or e-mail error:
+        try:
             user.create(message=render.activation_email().__unicode__())
-        except UserAccountError:
+        except (DuplicateUserError, DuplicateEmailError):
             f.note = 'You cannot register using this username or e-mail'
             return self.render_reg_page(f)
         raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
