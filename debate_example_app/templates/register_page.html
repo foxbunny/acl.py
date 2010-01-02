@@ -6,6 +6,11 @@ $def with (form)
 
 <p>We don't give away your personal data to anyone, yada yada, you know the story.</p>
 
+$if form.note:
+    <p>
+    <strong>$form.note</strong>
+    </p>
+
 <form action="/register" method="post">
     $for i in form.inputs:
         <p>
