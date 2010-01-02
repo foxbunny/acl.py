@@ -157,6 +157,11 @@ class request_code:
         content = render.request_success()
         return render.base_clean(content)
 
+class logoff:
+    def GET(self):
+        web.config.session['user'] = None
+        raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
+
 app = web.application(urls, globals())
 
 web.config.session = web.session.Session(app, config.sess_store, config.sess_init)
