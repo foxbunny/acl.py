@@ -1,0 +1,12 @@
+Dear $$username,
+
+Someone (probably you) requested the password for your account to be reset. 
+If you made the request, please follow the link below to confirm:
+
+http://0.0.0.0:8080/confirm/r/$$url
+
+If you did not request your password to be reset, please ignore this message,
+and your old password will remain valid.
+
+
+Debate Example App Staff
