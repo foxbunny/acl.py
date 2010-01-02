@@ -76,8 +76,9 @@ class register:
     def render_reg_page(self, form):
         content = render.register_page(form)
         return render.base_clean(content)
-class activate:
-    def GET(self, code):
+
+class confirm:
+    def GET(self, action, code):
         try:
             user = User.get_user_by_act_code(code)
         except UserAccountError:
@@ -88,6 +89,17 @@ class activate:
             # No account matches the code
             return self.render_failed()
 
+        if action == 'a':
+            self.activation(user)
+        elif action == 'd':
+            self.delete(user)
+        elif action == 'r':
+            self.reset(user)
+
+        content = render.confirmation_success(action)
+        return render.base_clean(content)
+
+    def activation(self, user):
         deadline = 172800 # 48 hours in seconds
 
         if not user.is_interaction_timely('activation', deadline):
@@ -98,12 +110,15 @@ class activate:
         user.activate()
         user.store()
 
-        content = render.activation_success()
-        return render.base_clean(content)
+    def delete(self, user):
+        user.delete()
 
-    def render_failed(self):
+    def reset(self, user):
+        user.confirm_reset()
+
+    def render_failed(self, action):
         f = request_code_form()
-        content = render.activation_failed(f)
+        content = render.confirmation_failed(f, action)
         return render.base_clean(content)
 
 class request_code:
