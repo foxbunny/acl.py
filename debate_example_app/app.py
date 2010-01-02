@@ -162,6 +162,22 @@ class logoff:
         web.config.session['user'] = None
         raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
 
+class reset_password:
+    def GET(self):
+        if not web.config.session['user']:
+            return self.render_reset_pw_page()
+        user = User.get_user(web.config.session['user'])
+        if not user:
+            return self.render_reset_pw_page()
+        user.reset_password(message=render.reset_message().__unicode__())
+        content = render.reset_successful(user._cleartext)
+        return render.base_clean(content)
+
+    def render_reset_pw_page(self):
+        content = render.reset_password_page()
+        return render.base_clean(content)
+
+
 app = web.application(urls, globals())
 
 web.config.session = web.session.Session(app, config.sess_store, config.sess_init)
