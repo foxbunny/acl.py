@@ -2,7 +2,7 @@ import web
 
 import config
 from debate import *
-from authenticationpy.auth import User, UserAccountError
+from authenticationpy.auth import *
 from auth_forms import login_form, register_form, request_code_form
 
 urls = (
