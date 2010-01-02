@@ -522,7 +522,7 @@ class User(object):
             else:
                 user = cls.get_user(email=email)
 
-            self.set_delete()
+            user.set_delete()
             user.send_email(message=message,
                             subject=del_subject,
                             username=user.username,
