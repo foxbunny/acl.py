@@ -112,7 +112,7 @@ class confirm:
         user.store()
 
     def delete(self, user):
-        user.delete()
+        User.confirm_delete(username = user.username)
 
     def reset(self, user):
         user.confirm_reset()
