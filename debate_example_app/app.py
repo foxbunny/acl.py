@@ -54,10 +54,16 @@ class register:
         f = register_form()
         if not f.validates():
             return self.render_reg_page(f)
-        user = User(username=f.username.value,
-                    email=f.email.value)
-        user.password = f.password.value
+        user = User(username=f.d.username,
+                    email=f.d.email)
+
+        # Here's how to trap min_pwd_length errors:
         try:
+            user.password = f.d.password
+        except ValueError:
+            f.note = 'Minimum password length is %s characters.' % min_pwd_length
+            return self.render_reg_page(f)
+        
             user.create(message=render.activation_email().__unicode__())
         except UserAccountError:
             f.note = 'You cannot register using this username or e-mail'
