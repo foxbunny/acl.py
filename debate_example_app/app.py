@@ -70,7 +70,8 @@ class register:
         except (DuplicateUserError, DuplicateEmailError):
             f.note = 'You cannot register using this username or e-mail'
             return self.render_reg_page(f)
-        raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
+
+        raise web.seeother(original_path)
 
     def render_reg_page(self, form):
         content = render.register_page(form)
