@@ -115,6 +115,8 @@ class confirm:
 
     def delete(self, user):
         User.confirm_delete(username = user.username)
+        # Let's also log off the user
+        web.config.session['user'] = None
 
     def reset(self, user):
         user.confirm_reset()
