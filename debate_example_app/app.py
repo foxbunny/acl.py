@@ -120,6 +120,8 @@ class confirm:
 
     def reset(self, user):
         user.confirm_reset()
+        # Let's log in the user
+        web.config.session['user'] = user.username
 
     def render_failed(self, action):
         f = request_code_form()
