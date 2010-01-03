@@ -43,6 +43,20 @@ from auth_forms import login_form
 render = web.template.render('templates')
 login_form = login_form()
 
+title_re = web.form.regex('.{5,255}', 'Title must be 5 to 255 characters long')
+topic_re = web.form.regex('.+', 'You must write your debate description')
+
+debate_form = web.form.Form(
+    web.form.Textbox('title', title_re, description='debate title'),
+    web.form.Textarea('topic', topic_re, 
+                      description='detailed topic description'),
+    validators = [
+        web.form.Validator('Debate with such title already exists',
+                           lambda i: not web.config.db.where('debates',
+                                                             title=i.title,
+                                                             limit=1))
+    ]
+)
 class debates:
     def GET(self):
         debates = web.config.db.select('debates')
