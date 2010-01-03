@@ -50,37 +50,37 @@ class register:
         if done:
             content = render.register_success()
             return render.base_clean(content)
-        f = register_form()
+        self.f = register_form()
         content = render.register_page(f)
         return render.base_clean(content)
 
     def POST(self, done):
         if done: return
 
-        f = register_form()
-        if not f.validates():
-            return self.render_reg_page(f)
-        user = User(username=f.d.username,
-                    email=f.d.email)
+        self.f = register_form()
+        if not self.f.validates():
+            return self.render_reg_page()
+        self.user = User(username=self.f.d.username,
+                         email=self.f.d.email)
 
         # Here's how to trap min_pwd_length errors:
         try:
-            user.password = f.d.password
+            self.user.password = self.f.d.password
         except ValueError:
-            f.note = 'Minimum password length is %s characters.' % min_pwd_length
-            return self.render_reg_page(f)
+            self.f.note = 'Minimum password length is %s characters.' % min_pwd_length
+            return self.render_reg_page()
         
         # Here's how to trap duplicate username or e-mail error:
         try:
-            user.create(message=render.activation_email().__unicode__())
+            self.user.create(message=render.activation_email().__unicode__())
         except (DuplicateUserError, DuplicateEmailError):
-            f.note = 'You cannot register using this username or e-mail'
-            return self.render_reg_page(f)
+            self.f.note = 'You cannot register using this username or e-mail'
+            return self.render_reg_page()
 
         raise web.seeother('/register/done')
 
-    def render_reg_page(self, form):
-        content = render.register_page(form)
+    def render_reg_page(self):
+        content = render.register_page(self.f)
         return render.base_clean(content)
 
 
