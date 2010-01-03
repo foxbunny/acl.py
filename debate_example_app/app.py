@@ -196,18 +196,57 @@ class logoff:
 
 
 class reset_password:
-    def GET(self):
+    def GET(self, done):
+        if done:
+            content = render.reset_successful()
+            return render.base_clean(content)
         if not web.config.session['user']:
+            self.f = request_code_form()
             return self.render_reset_pw_page()
         self.user = User.get_user(web.config.session['user'])
         if not self.user:
+            self.f = request_code_form()
             return self.render_reset_pw_page()
-        self.user.reset_password(message=render.reset_message().__unicode__())
-        content = render.reset_successful(user._cleartext)
+        self.f = change_password_form()
+        return self.render_change_pw_page()
+
+    def POST(self, done):
+        if done: return
+        i = web.input()
+
+        if hasattr(i, 'password'):
+            if not web.config.session['user']:
+                self.f = request_code_form()
+                return self.render_reset_pw_page()
+            self.f = change_password_form()
+            if not self.f.validates():
+                return self.render_change_pw_page()
+            self.user = User.get_user(web.config.session['user'])
+            try:
+                self.user.reset_password(message = render.pw_change_email().__unicode__())
+            except ValueError:
+                self.f.note = 'Minimum password length is %s characters.' % min_pwd_length
+                return self.render_change_pw_page()
+        else:
+            self.f = request_code_form()
+            if not self.f.validates():
+                return self.render_reset_pw_page()
+            self.user = User.get_user(email=self.f.d.email)
+            if not self.user:
+                # no user was found
+                self.f.note = 'There is no user with that e-mail address.'
+                return self.render_reset_pw_page()
+            self.user.reset_password(message = render.pw_change_email().__unicode__())
+        
+        raise web.seeother('/reset_password/done')
+
+
+    def render_change_pw_page(self):
+        content = render.password_change_page(self.f)
         return render.base_clean(content)
 
     def render_reset_pw_page(self):
-        content = render.reset_password_page()
+        content = render.password_reset_page(self.f)
         return render.base_clean(content)
 
 
