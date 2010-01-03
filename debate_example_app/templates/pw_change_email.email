@@ -1,0 +1,13 @@
+Dear $$username,
+
+Someone (probably you) requested your account's password to be changed. To 
+confirm the new password, you must follow the link below:
+
+http://0.0.0.0:8080/confirm/r/$$url
+
+After confirmation, you will be able to log in using the new password:
+
+$$password
+
+
+Debate Example App Staff
