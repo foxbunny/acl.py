@@ -26,6 +26,10 @@ render = web.template.render('templates')
 
 class login:
     def GET(self):
+        if web.config.session['user']:
+            path = web.ctx.env.get('HTTP_REFERER', None)
+            content = render.already_logged_in(path, web.config.session['user'])
+            return render.base_clean(content)
         self.f = login_form()
         content = render.login_page(self.f)
         return render.base_clean(content)
