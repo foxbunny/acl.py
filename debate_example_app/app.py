@@ -45,7 +45,10 @@ class login:
             content = render.login_page(self.f)
             return render.base_clean(content)
         web.config.session['user'] = self.user.username
-        raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
+        path = web.ctx.env.get('HTTP_REFERER', '/')
+        if path == 'http://0.0.0.0:8080/login':
+            path = '/'
+        raise web.seeother(path)
 
 
 class register:
