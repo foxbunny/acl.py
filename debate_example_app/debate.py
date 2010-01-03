@@ -46,7 +46,7 @@ login_form = login_form()
 class debates:
     def GET(self):
         # we have stored username in session at some point if authenticated
-        uname = web.config.session.get('user')
+        uname = web.ctx.session.user
         # we will take ``user == None`` to mean 'not authenticated'
         user = None
         if uname:

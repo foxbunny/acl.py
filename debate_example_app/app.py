@@ -23,12 +23,14 @@ urls = (
 
 render = web.template.render('templates')
 
+#FIXME: kill session to log off
+#FIXME: Store the User instance instead of just the username
 
 class login:
     def GET(self):
-        if web.config.session['user']:
+        if web.ctx.session.user:
             path = web.ctx.env.get('HTTP_REFERER', None)
-            content = render.already_logged_in(path, web.config.session['user'])
+            content = render.already_logged_in(path, web.ctx.session.user)
             return render.base_clean(content)
         self.f = login_form()
         content = render.login_page(self.f)
@@ -44,7 +46,7 @@ class login:
             self.f.note = "Wrong username or password. Please try again."
             content = render.login_page(self.f)
             return render.base_clean(content)
-        web.config.session['user'] = self.user.username
+        web.ctx.session.user = self.user.username
         path = web.ctx.env.get('HTTP_REFERER', '/')
         if path == 'http://0.0.0.0:8080/login':
             path = '/'
@@ -128,13 +130,13 @@ class confirm:
     def delete(self):
         User.confirm_delete(username = self.user.username)
         # Let's also log off the user
-        web.config.session['user'] = None
+        web.ctx.session.user = None
 
     def reset(self):
         self.user.confirm_reset()
         self.user.store()
         # Let's also log off the user
-        web.config.session['user'] = None
+        web.ctx.session.user = None
 
     def render_failed(self):
         f = request_code_form()
@@ -197,7 +199,7 @@ class request_code:
 
 class logoff:
     def GET(self):
-        web.config.session['user'] = None
+        web.ctx.session.user = None
         raise web.seeother(web.ctx.env.get('HTTP_REFERER', '/'))
 
 
@@ -206,10 +208,10 @@ class reset_password:
         if done:
             content = render.reset_successful()
             return render.base_clean(content)
-        if not web.config.session['user']:
+        if not web.ctx.session.user:
             self.f = request_code_form()
             return self.render_reset_pw_page()
-        self.user = User.get_user(web.config.session['user'])
+        self.user = User.get_user(web.ctx.session.user)
         if not self.user:
             self.f = request_code_form()
             return self.render_reset_pw_page()
@@ -221,13 +223,13 @@ class reset_password:
         i = web.input()
 
         if hasattr(i, 'password'):
-            if not web.config.session['user']:
+            if not web.ctx.session.user:
                 self.f = request_code_form()
                 return self.render_reset_pw_page()
             self.f = change_password_form()
             if not self.f.validates():
                 return self.render_change_pw_page()
-            self.user = User.get_user(web.config.session['user'])
+            self.user = User.get_user(web.ctx.session.user)
             try:
                 self.user.reset_password(message = render.pw_change_email().__unicode__())
             except ValueError:
@@ -258,7 +260,10 @@ class reset_password:
 
 app = web.application(urls, globals())
 
-web.config.session = web.session.Session(app, config.sess_store, config.sess_init)
+session = web.session.Session(app, config.sess_store, config.sess_init)
+def session_hook():
+    web.ctx.session = session
+app.add_processor(web.loadhook(session_hook))
 
 if __name__ == '__main__':
     print "Starting up..."
