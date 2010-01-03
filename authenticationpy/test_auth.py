@@ -610,3 +610,9 @@ def test_get_user_by_action_code_with_wrong_code():
 def test_id_property():
     user = auth.User(username='myuser', email='valid@email.com')
     assert user.id is None
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_id_property_on_saved_account():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    assert user.id == 1
