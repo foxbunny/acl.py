@@ -43,14 +43,18 @@ class login:
         web.config.session['user'] = user.username
         raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
 
+
 class register:
-    def GET(self):
+    def GET(self, done):
+        if done:
+            content = render.register_success()
+            return render.base_clean(content)
         f = register_form()
         content = render.register_page(f)
         return render.base_clean(content)
 
-    def POST(self):
-        original_path = web.ctx.env.get('HTTP_REFERRER', '/')
+    def POST(self, done):
+        if done: return
 
         f = register_form()
         if not f.validates():
@@ -72,11 +76,12 @@ class register:
             f.note = 'You cannot register using this username or e-mail'
             return self.render_reg_page(f)
 
-        raise web.seeother(original_path)
+        raise web.seeother('/register/done')
 
     def render_reg_page(self, form):
         content = render.register_page(form)
         return render.base_clean(content)
+
 
 class confirm:
     def GET(self, action, code):
