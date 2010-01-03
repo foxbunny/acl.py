@@ -124,8 +124,6 @@ class confirm:
         # Seems like activation was successful, let's activate the user
         self.user.activate()
         self.user.store()
-        # Let's also log in the user
-        web.config.session['user'] = self.user.username
 
     def delete(self):
         User.confirm_delete(username = self.user.username)
