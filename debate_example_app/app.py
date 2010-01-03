@@ -15,7 +15,7 @@ urls = (
     '/login', 'login',
     '/logoff', 'logoff',
     '/register(/done|)', 'register',
-    '/unregister', 'unregister',
+    '/unregister(/done|)', 'unregister',
     '/reset_password(/done|)', 'reset_password',
     '/confirm/(a|d|r)/([a-f0-9]{64})', 'confirm',
     '/confirm/request_code/(a|d|r|done)', 'request_code',
