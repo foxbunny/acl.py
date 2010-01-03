@@ -200,10 +200,10 @@ class reset_password:
     def GET(self):
         if not web.config.session['user']:
             return self.render_reset_pw_page()
-        user = User.get_user(web.config.session['user'])
-        if not user:
+        self.user = User.get_user(web.config.session['user'])
+        if not self.user:
             return self.render_reset_pw_page()
-        user.reset_password(message=render.reset_message().__unicode__())
+        self.user.reset_password(message=render.reset_message().__unicode__())
         content = render.reset_successful(user._cleartext)
         return render.base_clean(content)
 
