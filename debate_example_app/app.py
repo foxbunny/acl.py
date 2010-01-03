@@ -14,7 +14,7 @@ urls = (
     '/([\w_]+)/arguments/(.*)/delete', 'delete_argument',
     '/login', 'login',
     '/logoff', 'logoff',
-    '/register', 'register',
+    '/register(/done)', 'register',
     '/unregister', 'unregister',
     '/reset_password', 'reset_password',
     '/change_password', 'change_password',
