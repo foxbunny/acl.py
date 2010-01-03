@@ -73,9 +73,8 @@ def render_login_required():
 class debates:
     def GET(self):
         debates = web.config.db.select('debates')
-        content = render.debates(debates)
-        return render.base_template(content, web.ctx.session.user, login_form)
-
+        return in_base(render.debates(debates))
+        
 class new_debate:
     def POST(self):
         pass
