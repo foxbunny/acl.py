@@ -58,7 +58,7 @@ class register:
             content = render.register_success()
             return render.base_clean(content)
         self.f = register_form()
-        content = render.register_page(f)
+        content = render.register_page(self.f)
         return render.base_clean(content)
 
     def POST(self, done):
