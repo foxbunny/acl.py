@@ -57,6 +57,19 @@ debate_form = web.form.Form(
                                                              limit=1))
     ]
 )
+
+def in_base(content):
+    """ Render content using base_template """
+    return render.base_template(content, 
+                                web.ctx.session.user,
+                                login_form)
+
+def render_login_required():
+    """ Render the login required page """
+    content = render.debates(debates)
+    return in_base(content)
+
+
 class debates:
     def GET(self):
         debates = web.config.db.select('debates')
