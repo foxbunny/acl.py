@@ -198,7 +198,7 @@ class request_code:
 class logoff:
     def GET(self):
         web.config.session['user'] = None
-        raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
+        raise web.seeother(web.ctx.env.get('HTTP_REFERER', '/'))
 
 
 class reset_password:
