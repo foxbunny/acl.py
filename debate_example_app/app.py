@@ -23,7 +23,6 @@ urls = (
 
 render = web.template.render('templates')
 
-#FIXME: kill session to log off
 #FIXME: Store the User instance instead of just the username
 
 class login:
@@ -130,13 +129,13 @@ class confirm:
     def delete(self):
         User.confirm_delete(username = self.user.username)
         # Let's also log off the user
-        web.ctx.session.user = None
+        web.ctx.session.kill()
 
     def reset(self):
         self.user.confirm_reset()
         self.user.store()
         # Let's also log off the user
-        web.ctx.session.user = None
+        web.ctx.session.user.kill()
 
     def render_failed(self):
         f = request_code_form()
@@ -199,7 +198,7 @@ class request_code:
 
 class logoff:
     def GET(self):
-        web.ctx.session.user = None
+        web.ctx.session.kill()
         raise web.seeother(web.ctx.env.get('HTTP_REFERER', '/'))
 
 
