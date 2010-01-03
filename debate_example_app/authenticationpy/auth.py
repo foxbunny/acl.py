@@ -522,7 +522,7 @@ class User(object):
             else:
                 user = cls.get_user(email=email)
 
-            self.set_delete()
+            user.set_delete()
             user.send_email(message=message,
                             subject=del_subject,
                             username=user.username,
@@ -532,6 +532,11 @@ class User(object):
         
         if not confirmation:
             db.delete(TABLE, where=web.db.sqlwhere(delete_dict))
+
+    @classmethod
+    def confirm_delete(cls, username=None, email=None):
+        """ Wrapper around ``delete`` to instantly remove an account """
+        cls.delete(username=username, email=email)
 
     @classmethod
     def suspend(cls, username=None, email=None, message=None):
