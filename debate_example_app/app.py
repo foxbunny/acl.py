@@ -80,53 +80,56 @@ class register:
 
 class confirm:
     def GET(self, action, code):
+        self.action = action
+        self.code = code
         try:
-            user = User.get_user_by_act_code(code)
+            self.user = User.get_user_by_act_code(self.code)
         except UserAccountError:
             # Activation code is not valid format
             return self.render_failed()
 
-        if not user:
+        if not self.user:
             # No account matches the code
             return self.render_failed()
 
-        if action == 'a':
-            self.activation(user)
-        elif action == 'd':
-            self.delete(user)
-        elif action == 'r':
-            self.reset(user)
+        if self.action == 'a':
+            self.activation()
+        elif self.action == 'd':
+            self.delete()
+        elif self.action == 'r':
+            self.reset()
 
-        content = render.confirmation_success(action)
+        content = render.confirmation_success(self.action)
         return render.base_clean(content)
 
-    def activation(self, user):
+    def activation(self):
         deadline = 172800 # 48 hours in seconds
 
-        if not user.is_interaction_timely('activation', deadline):
+        if not self.user.is_interaction_timely('activation', deadline):
             # User took too long to activate
             return self.render_failed()
 
         # Seems like activation was successful, let's activate the user
-        user.activate()
-        user.store()
+        self.user.activate()
+        self.user.store()
         # Let's also log in the user
-        web.config.session['user'] = user.username
+        web.config.session['user'] = self.user.username
 
-    def delete(self, user):
-        User.confirm_delete(username = user.username)
+    def delete(self):
+        User.confirm_delete(username = self.user.username)
         # Let's also log off the user
         web.config.session['user'] = None
 
-    def reset(self, user):
-        user.confirm_reset()
+    def reset(self):
+        self.user.confirm_reset()
         # Let's log in the user
-        web.config.session['user'] = user.username
+        web.config.session['user'] = self.user.username
 
-    def render_failed(self, action):
+    def render_failed(self):
         f = request_code_form()
-        content = render.confirmation_failed(f, action)
+        content = render.confirmation_failed(f, self.action)
         return render.base_clean(content)
+
 
 class request_code:
     def GET(self):
