@@ -80,6 +80,8 @@ class new_debate:
     def GET(self):
         if not web.ctx.session.user:
             return in_base(render.debate_login_required())
+        self.f = debate_form()
+        return self.render_new_debate_page()
 
     def POST(self):
         if not web.ctx.session.user:
