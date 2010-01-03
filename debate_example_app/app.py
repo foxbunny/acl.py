@@ -231,7 +231,8 @@ class reset_password:
                 return self.render_change_pw_page()
             self.user = User.get_user(web.ctx.session.user)
             try:
-                self.user.reset_password(message = render.pw_change_email().__unicode__())
+                self.user.reset_password(password=self.f.d.new,
+                                         message = render.pw_change_email().__unicode__())
             except ValueError:
                 self.f.note = 'Minimum password length is %s characters.' % min_pwd_length
                 return self.render_change_pw_page()
