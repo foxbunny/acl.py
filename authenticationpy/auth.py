@@ -466,6 +466,10 @@ class User(object):
         if self._account_id:
             return False
         return True
+
+    @property
+    def id(self):
+        return self._account_id or None
        
     @classmethod
     def _validate_username(cls, username):
