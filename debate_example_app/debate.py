@@ -39,6 +39,7 @@ import web
 
 from authenticationpy.auth import User
 from auth_forms import login_form
+from slugize import slugize
 
 render = web.template.render('templates')
 login_form = login_form()
@@ -76,9 +77,25 @@ class debates:
         return in_base(render.debates(debates))
         
 class new_debate:
-    def POST(self):
-        pass
+    def GET(self):
+        if not web.ctx.session.user:
+            return in_base(render.debate_login_required())
 
+    def POST(self):
+        if not web.ctx.session.user:
+            return render_login_required()
+        self.f = debate_form()
+        if not self.f.validates():
+            return render_new_debate_page()
+        web.config.db.insert('debates',
+                             title=self.f.d.title,
+                             slug=slugize(self.d.title),
+                             topic=self.f.d.topic,
+                             author_id=web.ctx.session.user.id)
+        web.seeother('/debate/%s' % slugize(self.f.d.title))
+
+    def render_new_debate_page(self):
+        return in_base(render.new_debate(self.f))
 
 class debate:
     def GET(self, title):
