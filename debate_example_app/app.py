@@ -23,7 +23,6 @@ urls = (
 
 render = web.template.render('templates')
 
-#FIXME: Store the User instance instead of just the username
 
 class login:
     def GET(self):
@@ -45,7 +44,8 @@ class login:
             self.f.note = "Wrong username or password. Please try again."
             content = render.login_page(self.f)
             return render.base_clean(content)
-        web.ctx.session.user = self.user.username
+        # Add User instance to session storage
+        web.ctx.session.user = self.user
         path = web.ctx.env.get('HTTP_REFERER', '/')
         if path == 'http://0.0.0.0:8080/login':
             path = '/'
@@ -210,10 +210,6 @@ class reset_password:
         if not web.ctx.session.user:
             self.f = request_code_form()
             return self.render_reset_pw_page()
-        self.user = User.get_user(web.ctx.session.user)
-        if not self.user:
-            self.f = request_code_form()
-            return self.render_reset_pw_page()
         self.f = change_password_form()
         return self.render_change_pw_page()
 
@@ -228,10 +224,9 @@ class reset_password:
             self.f = change_password_form()
             if not self.f.validates():
                 return self.render_change_pw_page()
-            self.user = User.get_user(web.ctx.session.user)
             try:
-                self.user.reset_password(password=self.f.d.new,
-                                         message = render.pw_change_email().__unicode__())
+                web.ctx.session.user.reset_password(password=self.f.d.new,
+                                                    message = render.pw_change_email().__unicode__())
             except ValueError:
                 self.f.note = 'Minimum password length is %s characters.' % min_pwd_length
                 return self.render_change_pw_page()
