@@ -27,21 +27,21 @@ render = web.template.render('templates')
 
 class login:
     def GET(self):
-        f = login_form()
-        content = render.login_page(f)
+        self.f = login_form()
+        content = render.login_page(self.f)
         return render.base_clean(content)
 
     def POST(self):
-        f = login_form()
-        if not f.validates():
-            content = render.login_page(f)
+        self.f = login_form()
+        if not self.f.validates():
+            content = render.login_page(self.f)
             return render.base_clean(content)
-        user = User.get_user(username=f.username.value)
-        if not user or not user.authenticate(f.password.value):
-            f.note = "Wrong username or password. Please try again."
-            content = render.login_page(f)
+        self.user = User.get_user(username=self.f.d.username)
+        if not self.user or not self.user.authenticate(self.f.d.password):
+            self.f.note = "Wrong username or password. Please try again."
+            content = render.login_page(self.f)
             return render.base_clean(content)
-        web.config.session['user'] = user.username
+        web.config.session['user'] = self.user.username
         raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
 
 
