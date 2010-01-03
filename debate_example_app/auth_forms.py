@@ -32,3 +32,13 @@ register_form = web.form.Form(
 request_code_form = web.form.Form(
     web.form.Textbox('email', valid_email, description='email')
 )
+
+change_password_form = web.form.Form(
+    web.form.Password('password', description='current password'),
+    web.form.Password('new', description='new password'),
+    web.form.Password('confirm', description='confirm new password'),
+    validators = [
+        web.form.Validator('You must correctly retype your new password',
+                           lambda i: i.new == i.confirm),
+    ]
+)
