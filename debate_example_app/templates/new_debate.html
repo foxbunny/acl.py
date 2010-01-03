@@ -1,0 +1,21 @@
+$def with (form)
+
+<h1>Open a new debate</h1>
+
+<p>
+You have decided to open a new debate. That's great! Please use the form below
+to post the details of your topic. After you've created a new debate, other
+will be able to post arguments on either <em>pro</em> or <em>con</em> side.
+</p>
+
+<form action='/new_debate' method='post'>
+    $for i in form.inputs:
+        <p>
+        <label for="$i.name">$i.description</label><br />
+        $:i.render()
+        $if i.note:
+            <br />
+            <strong>$i.note</strong>
+        </p>
+    <input type="submit" name="submit" value="Post the debate" />
+</form>
