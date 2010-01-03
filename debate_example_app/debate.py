@@ -45,16 +45,9 @@ login_form = login_form()
 
 class debates:
     def GET(self):
-        # we have stored username in session at some point if authenticated
-        uname = web.ctx.session.user
-        # we will take ``user == None`` to mean 'not authenticated'
-        user = None
-        if uname:
-            # if username is not ``None``, grab the user from the database
-            user = User.get_user(username=uname)
         debates = web.config.db.select('debates')
         content = render.debates(debates)
-        return render.base_template(content, user, login_form)
+        return render.base_template(content, web.ctx.session.user, login_form)
 
 class new_debate:
     def POST(self):
