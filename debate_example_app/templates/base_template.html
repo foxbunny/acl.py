@@ -10,7 +10,11 @@ $def with (content, user, login_form)
     <body>
         <div id="login">
         $if user:
-            <p>Welcome, $user.username. | <a href="/logoff">Log off</a> | <a href="/change_password">Change password</a> | <a href="/unregister">Delete account</a></p>
+            <p>
+            Welcome, $user.username. | <a href="/logoff">Log off</a> 
+            | <a href="/reset_password">Change password</a> 
+            | <a href="/unregister">Delete account</a>
+            </p>
         $else:
             <form action="/login" method="post">
                 <a href="/login">Login:</a> 
