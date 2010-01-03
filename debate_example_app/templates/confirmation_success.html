@@ -1,3 +1,22 @@
-<h1>Account activated</h1>
+$def with (action)
 
-<p>Your account has been activated. You may <a href="/login">log in</a> to this web site now.</p>
+$if action == 'a':
+    <h1>Account activated</h1>
+
+    <p>
+    Your account has been activated. You may <a href="/login">log in</a> to this web site now.
+    </p>
+
+$elif action == 'd':
+    <h1>Acount removed</h1>
+
+    <p>
+    Your account has been removed. If you reconsider, you may always <a href="/register">register</a> a new one at any time. We thank you for using Debate Example App.
+    </p>
+
+$elif action == 'r':
+    <h1>Password set</h1>
+
+    <p>
+    Your new password has been set. From now on, you may use the new password to <a href="/login">login</a>.
+    </p>

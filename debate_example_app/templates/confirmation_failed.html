@@ -1,17 +1,41 @@
-$def with (form)
+$def with (form, action)
 
-<h1>Activation failed</h1>
+$if action == 'a':
+    <h1>Activation failed</h1>
+$elif action == 'd':
+    <h1>Account removal failed</h1>
+$elif action == 'r':
+    <h1>Password reset failed</h1>
 
 <p>
-Your activation link has expired or it is invalid. If you haven't activated your account yet, you may request a new link by using the form below.
+Your link has expired or it is invalid. Keep in mind that you cannot use the same link more than once, and that the link is only valid for 48 hours.
+</p>
+
+$if action == 'a':
+    <p>
+    You may have also already activated your acccount. In that case, you could try to <a href="/login">log in</a>.
+    </p>
+$elif action == 'd':
+    <p>
+    You account might also have already been removed. In that case, no further action is required.
+    </p>
+$elif action == 'r':
+    <p>
+    Your password may also have been reset already. Please try to <a href="/login">log in</a> using the new password.
+    </p>
+
+<h2>Request new link</h2>
+
+<p>
+You may request a new link by using the form below.
 </p>
 
 $if form.note:
     <p>
-    $:form.rendernote()
+    <strong>$:form.note</strong>
     </p>
 
-<form action="/activate/request_code" method="post">
+<form action="/confirm/request_code/$action" method="post">
     <p>
     <label for="email">Your e-mail address: </label>
     $:form.email.render()
