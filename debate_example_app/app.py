@@ -138,40 +138,57 @@ class confirm:
 
 
 class request_code:
-    def GET(self):
-        i = web.input(status='none')
-        if i.status == 'done':
+    def GET(self, action):
+        self.action = action
+        if self.action == 'done':
             content = render.request_success()
             return render.base_clean(content)
         else:
-            f = request_code_form()
-            content = render.activation_failed(f)
-            return render.base_clean(content)
+            self.f = request_code_form()
+            return self.render_failed()
 
-    def POST(self):
-        f = request_code_form()
-        if not f.validates():
-            content = render.activation_failed(f)
-            return render.base_clean(content)
+    def POST(self, action):
+        self.action = action
+
+        if self.action == 'done': return
+
+        self.f = request_code_form()
+        if not self.f.validates():
+            return self.render_failed()
         # Form returns e-mail address so we fetch the user using that.
-        user = User.get_user(email=f.email.value)
-        if not user:
+        self.user = User.get_user(email=self.f.d.email)
+        if not self.user:
             # There's no such user, so we ask the visitor to register.
-            f.note = 'You don\'t have an account. Please <a href="/register">register</a> first.'
-            content = render.activation_failed(f)
-            return render.base_clean(content)
-        # Assign new activation code
-        code = user.set_activation()
-        user.store()
-        # Send out the new activation e-mail
-        user.send_email(subject = web.config.authmail['activation_subject'],
-                        message = render.activation_email().__unicode__(),
-                        username = user.username,
-                        email = user.email,
-                        url = code)
-        raise web.seeother('/activate/request_code?status=done')
-        content = render.request_success()
+            self.f.note = 'You don\'t have an account. Please <a href="/register">register</a> first.'
+            return self.render_failed()
+        self.user.store()
+        raise web.seeother('/confirm/request_code/done')
+
+    def send_activation_code(self):
+        self.user.send_email(subject = web.config.authmail['activation_subject'],
+                             message = render.activation_email().__unicode__(),
+                             username = self.user.username,
+                             email = self.user.email,
+                             url = self.user.set_interaction(self.action))
+
+    def send_delete_code(self):
+        self.user.send_email(subject = web.config.authmail['delete_subject'],
+                             message = render.delete_email().__unicode__(),
+                             username = self.user.username,
+                             email = self.user.email,
+                             url = self.user.set_interaction(self.action))
+
+    def send_reset_code(self):
+        self.user.send_email(subject = web.config.authmail['reset_subject'],
+                             message = render.reset_email().__unicode__(),
+                             username = self.user.username,
+                             email = self.user.email,
+                             url = self.user.set_interaction(self.action))
+
+    def render_failed(self):
+        content = render.confirmation_failed(self.f, self.action)
         return render.base_clean(content)
+
 
 class logoff:
     def GET(self):
