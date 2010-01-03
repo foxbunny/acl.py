@@ -24,6 +24,7 @@ urls = (
 
 render = web.template.render('templates')
 
+
 class login:
     def GET(self):
         f = login_form()
@@ -176,6 +177,7 @@ class logoff:
     def GET(self):
         web.config.session['user'] = None
         raise web.seeother(web.ctx.env.get('HTTP_REFERRER', '/'))
+
 
 class reset_password:
     def GET(self):
