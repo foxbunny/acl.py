@@ -44,8 +44,8 @@ from slugize import slugize
 render = web.template.render('templates')
 login_form = login_form()
 
-title_re = web.form.regex('.{5,255}', 'Title must be 5 to 255 characters long')
-topic_re = web.form.regex('.+', 'You must write your debate description')
+title_re = web.form.regexp('.{5,255}', 'Title must be 5 to 255 characters long')
+topic_re = web.form.regexp('.+', 'You must write your debate description')
 
 debate_form = web.form.Form(
     web.form.Textbox('title', title_re, description='debate title'),
