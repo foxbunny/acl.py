@@ -453,6 +453,14 @@ def test_delete_user_with_notification():
     assert not auth.User.get_user(username='myuser')
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_delete_confirmation():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    auth.User.delete(username='myuser', confirmation=True)
+    auth.User.confirm_delete(username='myuser')
+    assert not auth.User.get_user(username='myuser')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 @raises(auth.UserAccountError)
 def test_suspend_account():
     user = auth.User(username='myuser', email='valid@email.com')
