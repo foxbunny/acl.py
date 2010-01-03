@@ -89,7 +89,7 @@ class new_debate:
             return render_new_debate_page()
         web.config.db.insert('debates',
                              title=self.f.d.title,
-                             slug=slugize(self.d.title),
+                             slug=slugize(self.f.d.title),
                              topic=self.f.d.topic,
                              author_id=web.ctx.session.user.id)
         web.seeother('/debate/%s' % slugize(self.f.d.title))
