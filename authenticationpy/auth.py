@@ -304,6 +304,10 @@ class User(object):
                     if not self.password:
                         raise UserAccountError('Password cannot be blank.')
                     db.insert(TABLE, **self._data_to_insert)
+                    record = db.where(TABLE, what='id',
+                                      limit=1,
+                                      username=self.username)[0]
+                    self._account_id = record.id
                 else:
                     db.update(TABLE, where='id = $id',
                               vars={'id': self._account_id},
