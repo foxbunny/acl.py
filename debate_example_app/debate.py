@@ -88,7 +88,7 @@ class new_debate:
             return render_login_required()
         self.f = debate_form()
         if not self.f.validates():
-            return render_new_debate_page()
+            return self.render_new_debate_page()
         web.config.db.insert('debates',
                              title=self.f.d.title,
                              slug=slugize(self.f.d.title),
