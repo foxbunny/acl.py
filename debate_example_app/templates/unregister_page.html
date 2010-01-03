@@ -1,0 +1,34 @@
+$def with (form)
+
+<h1>Delete your account</h1>
+
+<p>
+We are sorry that you have decided to remove your account. Before you proceed,
+please keep in mind that if you remove your account, your past activities on
+this site will no longer be associated with your user account, even if you
+register again in future using the <em>same</em> username.
+</p>
+
+<h2>Confirm your identity</h2>
+
+<p>
+To guard against unauthorized account removal, we must ask you to confirm your
+identity first.
+</p>
+
+$if form.note:
+    <p>
+    <strong>$form.note</strong>
+    </p>
+
+<form action='/unregister' method='post'>
+    $for i in form.inputs:
+        <p>
+        <label for="$i.name">$i.description</label><br />
+        $:i.render()
+        $if i.note:
+            <br />
+            <strong>$i.note</strong>
+        </p>
+    <input type="submit" name="submit" value="Confirm" />
+</form>
