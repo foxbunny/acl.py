@@ -135,7 +135,7 @@ class confirm:
         self.user.confirm_reset()
         self.user.store()
         # Let's also log off the user
-        web.ctx.session.user.kill()
+        web.ctx.session.kill()
 
     def render_failed(self):
         f = request_code_form()
