@@ -1,0 +1,13 @@
+Dear $$username,
+
+Someone (probably you) has requested your account to be removed. If you have
+made the request, please follow the link below to confirm.
+
+http://0.0.0.0:8080/confirm/d/$$url
+
+If you don't want you account removed, you need to take no action. The
+confirmation link will automatically expire in 48 hours, and you will still be
+able to access your account.
+
+
+Debate Example App Staff
