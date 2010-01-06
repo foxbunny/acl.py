@@ -110,13 +110,26 @@ class new_debate:
     def render_new_debate_page(self):
         return in_base(render.new_debate(self.f))
 
+
 class debate:
-    def GET(self, title):
-        pass
-
-    def POST(self, title):
-        pass
-
+    def GET(self, slug):
+        debate = web.config.db.where('debates',
+                                     limit=1,
+                                     slug=slug)
+        if not debate:
+            raise web.notfound(render.debate_not_found())
+        debate = debate[0]
+        debate.pro_arguments = web.config.db.where('arguments',
+                                                   debate_id=debate.id,
+                                                   side='pro')
+        debate.con_arguments = web.config.db.where('arguments',
+                                                   debate_id=debate.id,
+                                                   side='con')
+        f = argument_form()
+        return in_base(render.debate(debate, 
+                                     web.ctx.session.user,
+                                     f))
+        
 
 class delete_debate:
     def POST(self, title):
