@@ -103,8 +103,9 @@ class new_debate:
                              title=self.f.d.title,
                              slug=slugize(self.f.d.title),
                              topic=self.f.d.topic,
+                             author_id=web.ctx.session.user.id,
+                             username=web.ctx.session.user.username)
         web.seeother('/%s' % slugize(self.f.d.title))
-                             author_id=web.ctx.session.user.id)
 
     def render_new_debate_page(self):
         return in_base(render.new_debate(self.f))
