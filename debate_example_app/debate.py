@@ -50,6 +50,7 @@ login_form = login_form()
 
 title_re = web.form.regexp('.{5,255}', 'Title must be 5 to 255 characters long')
 textarea_re = web.form.regexp('.+', 'You must write your debate description')
+side_re = web.form.regexp('pro|con', 'You must pick a side to argue')
 
 debate_form = web.form.Form(
     web.form.Textbox('title', title_re, description='debate title'),
@@ -61,6 +62,11 @@ debate_form = web.form.Form(
                                                              title=i.title,
                                                              limit=1))
     ]
+)
+
+argument_form = web.form.Form(
+    web.form.Radio('side', ['pro', 'con'], side_re, description='pick a side'),
+    web.form.Textarea('argument', textarea_re, description='argument')
 )
 
 def in_base(content):
