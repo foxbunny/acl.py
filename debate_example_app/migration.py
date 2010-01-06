@@ -90,6 +90,34 @@ migrations = {
             ADD COLUMN act_type CHAR(1),
             ADD COLUMN act_code CHAR(64);
     """, # 7.0 causes data loss if previous versions already contain data
+    8.0: """
+        ALTER TABLE arguments
+            ADD COLUMN username VARCHAR(40),
+            ADD COLUMN side CHAR(3);
+    """,
+    9.0: """
+        ALTER TABLE arguments
+            ADD UNIQUE (debate_id, username);
+    """,
+    10.0: """
+        ALTER TABLE arguments
+            ALTER COLUMN username SET NOT NULL,
+            ALTER COLUMN side SET NOT NULL;
+    """,
+    11.0: """
+        ALTER TABLE debates
+            ALTER COLUMN topic SET NOT NULL;
+    """,
+    12.0: """
+        ALTER TABLE debates
+            ADD COLUMN username VARCHAR(40);
+        UPDATE debates
+            SET username = (SELECT username FROM authenticationpy_users WHERE id = debates.author_id);
+    """,
+    13.0: """
+        ALTER TABLE debates
+            ALTER COLUMN username SET NOT NULL;
+    """,
 }
 
 
