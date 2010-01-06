@@ -49,11 +49,11 @@ render = web.template.render('templates')
 login_form = login_form()
 
 title_re = web.form.regexp('.{5,255}', 'Title must be 5 to 255 characters long')
-topic_re = web.form.regexp('.+', 'You must write your debate description')
+textarea_re = web.form.regexp('.+', 'You must write your debate description')
 
 debate_form = web.form.Form(
     web.form.Textbox('title', title_re, description='debate title'),
-    web.form.Textarea('topic', topic_re, 
+    web.form.Textarea('topic', textarea_re, 
                       description='detailed topic description'),
     validators = [
         web.form.Validator('Debate with such title already exists',
