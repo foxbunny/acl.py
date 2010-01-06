@@ -45,6 +45,16 @@ from authenticationpy.auth import User
 from auth_forms import login_form
 from slugize import slugize
 
+debate_urls = (
+    '/', 'debates',
+    '/new', 'new_debate',
+    '/debates/([\w-]+)', 'debate',
+    '/debates/([\w-]+)/delete', 'delete_debate',
+    '/debates/([\w-]+)/arguments/new', 'new_argument',
+    '/debates/([\w-]+)/arguments/(.*)', 'argument',
+    '/debates/([\w-]+)/arguments/(.*)/delete', 'delete_argument',
+)
+
 render = web.template.render('templates')
 login_form = login_form()
 

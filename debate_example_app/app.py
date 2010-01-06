@@ -5,14 +5,9 @@ from debate import *
 from authenticationpy.auth import *
 from auth_forms import *
 
-urls = (
-    '/', 'debates',
-    '/new', 'new_debate',
-    '/debates/([\w-]+)', 'debate',
-    '/debates/([\w-]+)/delete', 'delete_debate',
-    '/debates/([\w-]+)/arguments/new', 'new_argument',
-    '/debates/([\w-]+)/arguments/(.*)', 'argument',
-    '/debates/([\w-]+)/arguments/(.*)/delete', 'delete_argument',
+
+urls = ()
+urls += (
     '/login', 'login',
     '/logoff', 'logoff',
     '/register(/done|)', 'register',
@@ -21,6 +16,7 @@ urls = (
     '/confirm/(a|d|r)/([a-f0-9]{64})', 'confirm',
     '/confirm/request_code/(a|d|r|done)', 'request_code',
 )
+urls += debate_urls
 
 render = web.template.render('templates')
 
