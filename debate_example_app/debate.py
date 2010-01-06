@@ -15,7 +15,8 @@ is called differently. ::
      id         serial PRIMARY KEY,
      title      varchar(255) UNIQUE,
      slug       varchar(255) UNIQUE,
-     topic      text,
+     topic      text NOT NULL,
+     username   varchar(40) NOT NULL,
      posted_at  timestamp DEFAULT CURRENT_TIMESTAMP,
      author_id  integer REFERENCES authenticationpy_users (id)
    );
@@ -27,9 +28,12 @@ is called differently. ::
      debate_id  integer REFERENCES debates (id),
      slug       varchar(255) UNIQUE,
      argument   text,
+     username   varchar(40),
+     side       char(3),
      posted_at  timestamp DEFAULT CURRENT_TIMESTAMP,
      author_id  integer REFERENCES authenticationpy_users (id),
-     UNIQUE (debate_id, author_id)
+     UNIQUE (debate_id, author_id),
+     UNIQUE (debate_id, username)
    );
    CREATE UNIQUE INDEX arguements_slug_index ON arguments USING btree (slug);
 
