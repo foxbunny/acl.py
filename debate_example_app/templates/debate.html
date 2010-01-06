@@ -1,0 +1,73 @@
+$def with (debate, user, form)
+
+$def print_argument(arglist):
+    <ul>
+        $for a in arglist:
+        <li>
+        $a.argument
+        <p>
+        <em>by $a.username</em>
+        </p>
+        </li>
+    </ul>
+
+
+<h1>$debate.title</h1>
+
+<p>
+<a href="/$debate.slug">permalink</a>
+</p>
+
+<div>
+    $:debate.topic
+    <p><em>by $debate.username</em></p>
+</div>
+
+<div>
+    <h2><em>Pro</em> side</h2>
+    $if debate.pro_arguments:
+        $print_arglist(debate.pro_arguments)
+    $else:
+        <p>
+        There are no arguments on this side, yet. Be the first to <a href="#new_argument">post one</a>
+        </p>
+</div>
+
+<div>
+    <h2><em>Con</em> side</h2>
+    $if debate.con_arguments:
+        $print_arglist(debate.con_arguments)
+    $else:
+        <p>
+        There are no arguments on this side, yet. Be the first to <a href="#new_argument">post one</a>
+        </p>
+
+<h2 id="new_argument">Post a new argument</h2>
+
+$if user:
+    $if form.note:
+        <p>
+        <strong>$form.note</strong>
+        </p>
+
+    <form action="/$debate.slug/arguments/new" method="post">
+        <p>
+        $form.side.description<br />
+        $if form.side.note:
+            <strong>$form.side.note</strong><br />
+        $:form.side.render()
+        </p>
+        <p>
+        <label for="$form.argument.name">$form.argument.description</label><br />
+        $:form.argument.render()
+        $if form.argument.note:
+            <br />
+            <strong>$form.argument.note</strong>
+        </p>
+    </form>
+$else:
+    <p>
+    You must be <a href="/login">logged in</a> to post an argument. If you 
+    don't have an account yet, please <a href="/register">register</a> first.
+    </p>
+
