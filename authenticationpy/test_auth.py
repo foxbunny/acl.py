@@ -626,3 +626,13 @@ def test_login_form_validates_username():
     login_form = authforms.login_form()
     # Feed it a really short username:
     assert not login_form.username.validate('us')
+
+def test_login_password_nonempty():
+    login_form = authforms.login_form()
+    # Feed it an emtpy string
+    assert not login_form.password.validate('')
+
+def test_login_min_pwd_length():
+    login_form = authforms.login_form()
+    assert not login_form.password.validate('pas')
+    assert login_form.password.validate('pass')
