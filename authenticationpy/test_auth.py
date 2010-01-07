@@ -10,6 +10,7 @@ web.config.authmail = {'sender': 'admin@mysite.com',
                        'activation_subject': 'MySite.com Activation E-Mail',}
 
 from authenticationpy import auth
+from authenticationpy import authforms
 
 invalid_usernames = (
     '12hours', # starts with a number
@@ -616,3 +617,12 @@ def test_id_property_on_saved_account():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create()
     assert user.id == 1
+
+def test_login_form():
+    login_form = authforms.login_form()
+    assert isinstance(login_form, web.form.Form)
+
+def test_login_form_validates_username():
+    login_form = authforms.login_form()
+    # Feed it a really short username:
+    assert not login_form.username.validate('us')
