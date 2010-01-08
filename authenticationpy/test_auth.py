@@ -666,3 +666,23 @@ def test_registration_pw_confirmation():
         'password': 'abc123',
         'confirm': 'wont repeat'
     }))
+
+def test_reset_form():
+    reset_form = authforms.pw_reset_form()
+    assert isinstance(reset_form, web.form.Form)
+
+def test_set_new_password():
+    reset_form = authforms.pw_reset_form()
+    assert reset_form.validates(web.storify({
+        'password': 'abc123',
+        'new': '123abc',
+        'confirm': '123abc'
+    }))
+
+def test_wrong_new_password():
+    reset_form = authforms.pw_reset_form()
+    assert not reset_form.validates(web.storify({
+        'password': 'abc123',
+        'new': '123abc',
+        'confirm': '123123'
+    }))

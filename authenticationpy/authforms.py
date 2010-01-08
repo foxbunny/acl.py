@@ -34,9 +34,13 @@ email_va = form.regexp(
 )
 confirmation_va = form.Validator(pw_confirm_msg,
                                  lambda i: i.password == i.confirm)
+new_confirmation_va = form.Validator(pw_confirm_msg,
+                                     lambda i: i.new == i.confirm)
 
 username_field = form.Textbox('username', username_va)
 password_field = form.Password('password', password_va)
+new_pw_field = form.Password('new', password_va,
+                             descrption='new password')
 pw_confirmation_field = form.Password('confirm', password_va,
                                       description='confirm password')
 email_field = form.Textbox('email', email_va, description='e-mail')
@@ -54,4 +58,13 @@ register_form = form.Form(
     validators = [
         confirmation_va, 
     ]
+)
+
+pw_reset_form = form.Form(
+    password_field,
+    new_pw_field,
+    pw_confirmation_field,
+    validators = [
+        new_confirmation_va,
+    ]   
 )
