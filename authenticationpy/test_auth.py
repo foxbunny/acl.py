@@ -686,3 +686,19 @@ def test_wrong_new_password():
         'new': '123abc',
         'confirm': '123123'
     }))
+
+def test_email_request_form():
+    email_form = authforms.email_request_form()
+    assert isinstance(email_form, web.form.Form)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_email_belongs_to_account_validation():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    email_form = authforms.email_request_form()
+    assert email_form.validates(web.storify({
+        'email': user.email,
+    })), email_form.note
+    assert not email_form.validates(web.storify({
+        'email': 'some@other.com',
+    }))

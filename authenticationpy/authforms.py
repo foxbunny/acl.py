@@ -22,6 +22,8 @@ email_msg = web.config.authform.get('email error',
                                     'Invalid e-mail address')
 pw_confirm_msg = web.config.authform.get('password confirmation error',
                                          'You must correctly retype your password')
+email_request_msg = web.config.authform.get('email request error',
+                                            'This e-mail corresponds to no user')
 
 
 username_va = form.regexp('[A-Za-z]{1}[A-Za-z0-9.-_]{3,39}', username_msg)
@@ -36,6 +38,8 @@ confirmation_va = form.Validator(pw_confirm_msg,
                                  lambda i: i.password == i.confirm)
 new_confirmation_va = form.Validator(pw_confirm_msg,
                                      lambda i: i.new == i.confirm)
+email_belongs_va = form.Validator(email_request_msg,
+                                  lambda i: auth.User.get_user(email=i.email) is not None)
 
 username_field = form.Textbox('username', username_va)
 password_field = form.Password('password', password_va)
@@ -67,4 +71,11 @@ pw_reset_form = form.Form(
     validators = [
         new_confirmation_va,
     ]   
+)
+
+email_request_form = form.Form(
+    email_field,
+    validators = [
+        email_belongs_va,
+    ]
 )
