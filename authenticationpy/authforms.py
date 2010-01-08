@@ -45,3 +45,13 @@ login_form = form.Form(
     username_field,
     password_field,
 )
+
+register_form = form.Form(
+    username_field,
+    email_field,
+    password_field,
+    pw_confirmation_field,
+    validators = [
+        confirmation_va, 
+    ]
+)

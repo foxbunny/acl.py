@@ -636,3 +636,33 @@ def test_login_min_pwd_length():
     login_form = authforms.login_form()
     assert not login_form.password.validate('pas')
     assert login_form.password.validate('pass')
+
+def test_registration_form():
+    reg_form = authforms.register_form()
+    assert isinstance(reg_form, web.form.Form)
+
+def test_registration_email_validation():
+    reg_form = authforms.register_form()
+    reg_from = authforms.register_form()
+    assert reg_form.email.validate('valid@email.com')
+    for e in invalid_emails:
+        yield check_reg_invalid_emails, e
+
+def check_reg_invalid_emails(email):
+    reg_form = authforms.register_form()
+    assert not reg_form.email.validate(email)
+
+def test_registration_pw_confirmation():
+    reg_form = authforms.register_form()
+    assert reg_form.validates(web.storify({
+        'username': 'myuser',
+        'email': 'valid@email.com',
+        'password': 'abc123',
+        'confirm': 'abc123'
+    })), reg_form.note
+    assert not reg_form.validates(web.storify({
+        'username': 'myuser',
+        'email': 'valid@email.com',
+        'password': 'abc123',
+        'confirm': 'wont repeat'
+    }))
