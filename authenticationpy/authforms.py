@@ -38,7 +38,7 @@ confirmation_va = form.Validator(pw_confirm_msg,
 username_field = form.Textbox('username', username_va)
 password_field = form.Password('password', password_va)
 pw_confirmation_field = form.Password('confirm', password_va,
-                                            description='confirm password')
+                                      description='confirm password')
 email_field = form.Textbox('email', email_va, description='e-mail')
 
 login_form = form.Form(
