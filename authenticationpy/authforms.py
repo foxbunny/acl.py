@@ -6,6 +6,14 @@ from authenticationpy import auth
 if not hasattr(web.config, 'authform'):
     web.config.authform = {}
 
+# The following validation error messages are simple and English. It is
+# recommended that you change them by assigning a authform dictionary. For
+# example, if you want to set ``username error`` and ``password error``, you
+# will use those keys in ``web.config.authform``::
+#
+#     web.config.authform = {'username error': 'Watch the username format!',
+#                            'password error': 'This password is too short.'}
+#
 username_msg = web.config.authform.get('username error', 
                                        'Invalid username')
 password_msg = web.config.authform.get('password error',
