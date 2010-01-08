@@ -224,6 +224,19 @@ def test_get_user_with_combined_nonexistent_email():
     assert user is None
 
 @with_setup(setup=setup_table, teardown=teardown_table)
+def test_get_user_sets_cache():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    assert web.ctx.auth_user_cache
+    assert web.ctx.auth_user_cache.get('username')
+    assert web.ctx.auth_user_cache.get('email')
+    assert web.ctx.auth_user_cache.get('object')
+    assert web.ctx.auth_user_cache.get('object') is user
+    user = auth.User.get_user(username='myuser')
+    assert web.ctx.auth_user_cache.get('object') is user
+
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_existing_user_has_no_new_account_flag():
     user = auth.User(username='myuser', email='valid@email.com')
     user.create()

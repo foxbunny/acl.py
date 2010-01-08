@@ -140,6 +140,9 @@ class User(object):
         # Reset ``_dirty_fields`` so it's empty after initialization
         object.__setattr__(self, '_dirty_fields', [])
 
+        # Ref the cache object
+        object.__setattr__(self, '_cache', globals().get('web.ctx.auth_user_cache'))
+
 
     def __setattr__(self, name, value):
         if name == 'username':
@@ -293,11 +296,19 @@ class User(object):
                             email=self.email,
                             password=self._cleartext,
                             url=self._act_code)
+
         self.store()
 
     def store(self):
         """ Stores a user account """
         if self._dirty_fields:
+            # Destroy the cache in an unlikely event that the username or
+            # email matches the cached username or email respectively (this
+            # happens in tests).
+            if web.ctx.auth_user_cache.get('username') == self.username or \
+               web.ctx.auth_user_cache.get('email') == self.email:
+                web.ctx.auth_user_cache = {}
+
             transaction = db.transaction()
             try:
                 if self._new_account:
@@ -516,9 +527,15 @@ class User(object):
         delete_dict = {}
 
         if username:
+            if web.ctx.auth_user_cache.get('username') == username:
+                # Reset the chace before we delete the user
+                web.ctx.auth_user_cache = {}
             delete_dict['username'] = username
 
         if email:
+            if web.ctx.auth_user_cache.get('email') == email:
+                # Reset the chace before we delete the user
+                web.ctx.auth_user_cache = {}
             delete_dict['email'] = email
 
         if confirmation is None and message:
@@ -584,7 +601,10 @@ class User(object):
                             subject=ssp_subject,
                             username=user.username,
                             email=user.email)
-        
+
+        # Destroy the cache
+        web.ctx.auth_user_cache = {}
+
         db.update(TABLE, where=web.db.sqlwhere(suspend_dict), active=False)
 
     @classmethod
@@ -616,33 +636,50 @@ class User(object):
         if username:
             if not cls._validate_username(username):
                 raise ValueError("'%s' does not look like a valid username" % username)
+            if web.ctx.auth_user_cache.get('username') == username:
+                return web.ctx.auth_user_cache['object']
             select_dict['username'] = username
         if email:
             if not cls._validate_email(email):
                 raise ValueError("'%s' does not look like a valid e-mail" % email)
+            if web.ctx.auth_user_cache.get('email') == email:
+                return web.ctx.auth_user_cache['object']
             select_dict['email'] = email
-        
+
         records = db.where(TABLE, **select_dict)
 
         if not records:
             # There is nothing to return
+            web.ctx.auth_user_cache = {}
             return None
 
-        return cls._map_user_properties(records[0])
-
+        return cls._cache_and_return(records[0])
+        
     @classmethod
     def get_user_by_act_code(cls, act_code):
         """ Gets a user account by interaction code """
         if not re.match(r'^[a-f0-9]{64}$', act_code):
             raise UserAccountError('Action code is not the right format.')
 
+        if web.ctx.auth_user_cache.get('act_code') == act_code:
+            return web.ctx.auth_user_cache['object']
+
         records = db.where(TABLE, act_code=act_code)
         
         if not records:
             # There is nothing to return
+            web.ctx.auth_user_cache = {}
             return None
 
-        return cls._map_user_properties(records[0])
+        return cls._cache_and_return(records[0])
+
+    @classmethod
+    def _cache_and_return(cls, record):
+        web.ctx.auth_user_cache['username'] = record.username
+        web.ctx.auth_user_cache['email'] = record.email
+        web.ctx.auth_user_cache['act_code'] = record.act_code
+        web.ctx.auth_user_cache['object'] = cls._map_user_properties(record)
+        return web.ctx.auth_user_cache['object']
 
     @classmethod
     def _map_user_properties(cls, user_account):
