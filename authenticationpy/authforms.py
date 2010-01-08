@@ -24,7 +24,8 @@ pw_confirm_msg = web.config.authform.get('password confirmation error',
                                          'You must correctly retype your password')
 email_request_msg = web.config.authform.get('email request error',
                                             'This e-mail corresponds to no user')
-
+account_reg_msg = web.config.authform.get('account registration error',
+                                             'Username or e-mail already belongs to a registered user')
 
 username_va = form.regexp('[A-Za-z]{1}[A-Za-z0-9.-_]{3,39}', username_msg)
 password_va = form.regexp('^.{%s}.*' % auth.min_pwd_length, password_msg)
@@ -40,6 +41,9 @@ new_confirmation_va = form.Validator(pw_confirm_msg,
                                      lambda i: i.new == i.confirm)
 email_belongs_va = form.Validator(email_request_msg,
                                   lambda i: auth.User.get_user(email=i.email) is not None)
+account_reg_va = form.Validator(account_reg_msg,
+                                         lambda i: not auth.User.exists(username=i.username,
+                                                                        email=i.email))
 
 username_field = form.Textbox('username', username_va)
 password_field = form.Password('password', password_va)
@@ -61,6 +65,7 @@ register_form = form.Form(
     pw_confirmation_field,
     validators = [
         confirmation_va, 
+        account_reg_va,
     ]
 )
 

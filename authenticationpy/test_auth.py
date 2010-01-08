@@ -668,6 +668,7 @@ def check_reg_invalid_emails(email):
     reg_form = authforms.register_form()
     assert not reg_form.email.validate(email)
 
+@with_setup(setup=setup_table, teardown=teardown_table)
 def test_registration_pw_confirmation():
     reg_form = authforms.register_form()
     assert reg_form.validates(web.storify({
@@ -681,6 +682,30 @@ def test_registration_pw_confirmation():
         'email': 'valid@email.com',
         'password': 'abc123',
         'confirm': 'wont repeat'
+    }))
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_registration_fails_if_user_exists():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    reg_form = authforms.register_form()
+    assert not reg_form.validates(web.storify({
+        'username': 'myuser',
+        'email': 'valid@email.com',
+        'password': 'abc123',
+        'confirm': 'abc123',
+    }))
+    assert not reg_form.validates(web.storify({
+        'username': 'otheruser',
+        'email': 'valid@email.com', # still the same e-mail
+        'password': 'abc123',
+        'confirm': 'abc123',
+    }))
+    assert not reg_form.validates(web.storify({
+        'username': 'myuser',
+        'email': 'other@email.com',
+        'password': 'abc123',
+        'confirm': 'abc123',
     }))
 
 def test_reset_form():
