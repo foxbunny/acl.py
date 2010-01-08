@@ -671,3 +671,19 @@ class User(object):
             object.__setattr__(user, key, user_dict[key])
 
         return user
+
+    @classmethod
+    def exists(cls, username=None, email=None):
+        if not username and not email:
+            raise TypeError('You must supply username or email argument.')
+        where_kws = {}
+        if username:
+            where_kws['username'] = username
+        if email:
+            where_kws['email'] = email
+
+        where_clause = web.db.sqlwhere(where_kws, grouping=' OR ')
+        if len(db.select(TABLE, what='id', where=where_clause)) > 0:
+            return True
+        return False
+

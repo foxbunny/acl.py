@@ -618,6 +618,22 @@ def test_id_property_on_saved_account():
     user.create()
     assert user.id == 1
 
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_user_exist():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    assert auth.User.exists(username='myuser')
+    assert auth.User.exists(email='valid@email.com')
+    assert auth.User.exists(username='myuser', email='valid@email.com')
+    assert auth.User.exists(username='myuser', email='some@other.com')
+    assert auth.User.exists(username='none', email='valid@email.com')
+    assert not auth.User.exists(username='none')
+    assert not auth.User.exists(email='some@other.com')
+
+@raises(TypeError)
+def test_user_exists_with_no_args():
+    auth.User.exists()
+
 def test_login_form():
     login_form = authforms.login_form()
     assert isinstance(login_form, web.form.Form)
