@@ -32,8 +32,16 @@ email_va = form.regexp(
     r')@(?:[A-Za-z0-9]+(?:-*[A-Za-z0-9]+)*\.)+[A-Za-z]{2,6}$', # domain
     email_msg
 )
+confirmation_va = form.Validator(pw_confirm_msg,
+                                 lambda i: i.password == i.confirm)
+
+username_field = form.Textbox('username', username_va)
+password_field = form.Password('password', password_va)
+pw_confirmation_field = form.Password('confirm', password_va,
+                                            description='confirm password')
+email_field = form.Textbox('email', email_va, description='e-mail')
 
 login_form = form.Form(
-    form.Textbox('username', username_va),
-    form.Password('password', password_va),
+    username_field,
+    password_field,
 )
