@@ -128,13 +128,15 @@ class confirm:
 
 
 class request_code:
+    def __init__(self):
+        self.f = authforms.email_request_form()
+
     def GET(self, action):
         self.action = action
         if self.action == 'done':
             content = render.request_success()
             return render.base_clean(content)
         else:
-            self.f = request_code_form()
             return self.render_failed()
 
     def POST(self, action):
@@ -142,15 +144,25 @@ class request_code:
 
         if self.action == 'done': return
 
-        self.f = request_code_form()
         if not self.f.validates():
             return self.render_failed()
         # Form returns e-mail address so we fetch the user using that.
         self.user = User.get_user(email=self.f.d.email)
-        if not self.user:
-            # There's no such user, so we ask the visitor to register.
-            self.f.note = 'You don\'t have an account. Please <a href="/register">register</a> first.'
-            return self.render_failed()
+        # TODO: The following chunk of code is rather large. There should be a
+        # way to give users more convenience here.
+        if self.action == 'a':
+            self.send_activation_code()
+            self.user.set_activation()
+        elif self.action == 'd':
+            self.send_delete_code()
+            self.user.set_delete()
+        elif self.action == 'r':
+            self.send_reset_code()
+            self.user.set_reset()
+        else:
+            self.render_failed()
+        # Since we set the action code in user object in previous lines, we now
+        # need to store the user record.
         self.user.store()
         raise web.seeother('/confirm/request_code/done')
 
