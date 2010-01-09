@@ -2,6 +2,7 @@ import web
 
 import config
 from debate import *
+from authenticationpy import user_cache_hook, authforms
 from authenticationpy.auth import *
 from auth_forms import *
 
@@ -288,6 +289,7 @@ session = web.session.Session(app, config.sess_store, config.sess_init)
 def session_hook():
     web.ctx.session = session
 app.add_processor(web.loadhook(session_hook))
+app.add_processor(web.loadhook(user_cache_hook))
 
 if __name__ == '__main__':
     print "Starting up..."
