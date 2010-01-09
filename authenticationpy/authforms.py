@@ -40,10 +40,10 @@ confirmation_va = form.Validator(pw_confirm_msg,
 new_confirmation_va = form.Validator(pw_confirm_msg,
                                      lambda i: i.new == i.confirm)
 email_belongs_va = form.Validator(email_request_msg,
-                                  lambda i: auth.User.get_user(email=i.email) is not None)
+                                  lambda i: auth.User.exists(email=i.email))
 account_reg_va = form.Validator(account_reg_msg,
-                                         lambda i: not auth.User.exists(username=i.username,
-                                                                        email=i.email))
+                                lambda i: not auth.User.exists(username=i.username,
+                                                               email=i.email))
 
 username_field = form.Textbox('username', username_va)
 password_field = form.Password('password', password_va)
