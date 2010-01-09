@@ -666,6 +666,31 @@ def test_login_min_pwd_length():
     assert not login_form.password.validate('pas')
     assert login_form.password.validate('pass')
 
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_login_with_real_account():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc123'
+    user.create()
+    login_form = authforms.login_form()
+    assert not login_form.validates(web.storify({
+        'username': 'myuser',
+        'password': 'abc123',
+    }))
+    user.activate()
+    user.store()
+    assert login_form.validates(web.storify({
+        'username': 'myuser',
+        'password': 'abc123',
+    })), login_form.note
+    assert not login_form.validates(web.storify({
+        'username': 'myuser',
+        'password': 'wrong password',
+    }))
+    assert not login_form.validates(web.storify({
+        'username': 'wrong',
+        'password': 'abc123',
+    }))
+
 def test_registration_form():
     reg_form = authforms.register_form()
     assert isinstance(reg_form, web.form.Form)

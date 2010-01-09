@@ -25,7 +25,9 @@ pw_confirm_msg = web.config.authform.get('password confirmation error',
 email_request_msg = web.config.authform.get('email request error',
                                             'This e-mail corresponds to no user')
 account_reg_msg = web.config.authform.get('account registration error',
-                                             'Username or e-mail already belongs to a registered user')
+                                          'Username or e-mail already belongs to a registered user')
+authentication_msg = web.config.authform.get('authentication error',
+                                             'Please check your username or password.')
 
 username_va = form.regexp('[A-Za-z]{1}[A-Za-z0-9.-_]{3,39}', username_msg)
 password_va = form.regexp('^.{%s}.*' % auth.min_pwd_length, password_msg)
@@ -45,6 +47,9 @@ account_reg_va = form.Validator(account_reg_msg,
                                 lambda i: not auth.User.exists(username=i.username,
                                                                email=i.email))
 
+authentication_va = form.Validator(authentication_msg,
+                                   lambda i: auth.User.get_user(i.username).authenticate(i.password))
+
 username_field = form.Textbox('username', username_va)
 password_field = form.Password('password', password_va)
 new_pw_field = form.Password('new', password_va,
@@ -56,6 +61,9 @@ email_field = form.Textbox('email', email_va, description='e-mail')
 login_form = form.Form(
     username_field,
     password_field,
+    validators = [
+        authentication_va,
+    ]
 )
 
 register_form = form.Form(
