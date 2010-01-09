@@ -47,36 +47,26 @@ class login:
 
 
 class register:
+    def __init__(self):
+        self.f = authforms.register_form()
+
     def GET(self, done):
         if done:
             content = render.register_success()
             return render.base_clean(content)
-        self.f = register_form()
         content = render.register_page(self.f)
         return render.base_clean(content)
 
     def POST(self, done):
         if done: return
-
-        self.f = register_form()
         if not self.f.validates():
             return self.render_reg_page()
+        # Typical user acount setup procedure with setting custom password, and
+        # an activation e-mail.
         self.user = User(username=self.f.d.username,
                          email=self.f.d.email)
-
-        # Here's how to trap min_pwd_length errors:
-        try:
-            self.user.password = self.f.d.password
-        except ValueError:
-            self.f.note = 'Minimum password length is %s characters.' % min_pwd_length
-            return self.render_reg_page()
-        
-        # Here's how to trap duplicate username or e-mail error:
-        try:
-            self.user.create(message=render.activation_email().__unicode__())
-        except (DuplicateUserError, DuplicateEmailError):
-            self.f.note = 'You cannot register using this username or e-mail'
-            return self.render_reg_page()
+        self.user.password = self.f.d.password
+        self.user.create(message=render.activation_email().__unicode__())
 
         raise web.seeother('/register/done')
 
