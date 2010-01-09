@@ -9,7 +9,7 @@ web.config.authdb = database
 web.config.authmail = {'sender': 'admin@mysite.com',
                        'activation_subject': 'MySite.com Activation E-Mail',}
 
-from authenticationpy import auth
+from authenticationpy import user_cache_hook, auth
 from authenticationpy import authforms
 
 invalid_usernames = (
@@ -24,6 +24,8 @@ invalid_emails = (
     '@nouser.com',
     '@double@atmark@server.com',
 )
+
+user_cache_hook()
 
 def setup_table():
     # create table for User object

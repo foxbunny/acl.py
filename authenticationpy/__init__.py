@@ -1,6 +1,6 @@
 import web
 
-# Set empty cache if not already set
-if not hasattr(web.ctx, 'auth_user_cache'):
+def user_cache_hook():
+    # Set empty cache if not already set
     web.ctx.auth_user_cache = {}
 
