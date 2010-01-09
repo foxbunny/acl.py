@@ -122,7 +122,7 @@ class confirm:
         web.ctx.session.kill()
 
     def render_failed(self):
-        f = request_code_form()
+        f = authforms.email_request_form()
         content = render.confirmation_failed(f, self.action)
         return render.base_clean(content)
 
