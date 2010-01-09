@@ -28,20 +28,16 @@ class login:
             path = web.ctx.env.get('HTTP_REFERER', None)
             content = render.already_logged_in(path, web.ctx.session.user)
             return render.base_clean(content)
-        self.f = login_form()
+        self.f = authforms.login_form()
         content = render.login_page(self.f)
         return render.base_clean(content)
 
     def POST(self):
-        self.f = login_form()
+        self.f = authforms.login_form()
         if not self.f.validates():
             content = render.login_page(self.f)
             return render.base_clean(content)
         self.user = User.get_user(username=self.f.d.username)
-        if not self.user or not self.user.authenticate(self.f.d.password):
-            self.f.note = "Wrong username or password. Please try again."
-            content = render.login_page(self.f)
-            return render.base_clean(content)
         # Add User instance to session storage
         web.ctx.session.user = self.user
         path = web.ctx.env.get('HTTP_REFERER', '/')
