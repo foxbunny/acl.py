@@ -10,6 +10,7 @@ web.config.authmail = {'sender': 'admin@mysite.com',
                        'activation_subject': 'MySite.com Activation E-Mail',}
 
 from authenticationpy import auth
+from authenticationpy import authforms
 
 invalid_usernames = (
     '12hours', # starts with a number
@@ -221,6 +222,19 @@ def test_get_user_with_combined_nonexistent_email():
     user.create()
     user = auth.User.get_user(username='myuser', email='not.me@email.com')
     assert user is None
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_get_user_sets_cache():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    user = auth.User.get_user(username='myuser')
+    assert web.ctx.auth_user_cache
+    assert web.ctx.auth_user_cache.get('username')
+    assert web.ctx.auth_user_cache.get('email')
+    assert web.ctx.auth_user_cache.get('object')
+    assert web.ctx.auth_user_cache.get('object') is user
+    user = auth.User.get_user(username='myuser')
+    assert web.ctx.auth_user_cache.get('object') is user
 
 @with_setup(setup=setup_table, teardown=teardown_table)
 def test_existing_user_has_no_new_account_flag():
@@ -605,3 +619,165 @@ def test_get_user_by_action_code():
 @raises(auth.UserAccountError)
 def test_get_user_by_action_code_with_wrong_code():
     auth.User.get_user_by_act_code('bogus code')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_id_property():
+    user = auth.User(username='myuser', email='valid@email.com')
+    assert user.id is None
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_id_property_on_saved_account():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    assert user.id == 1
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_user_exist():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    assert auth.User.exists(username='myuser')
+    assert auth.User.exists(email='valid@email.com')
+    assert auth.User.exists(username='myuser', email='valid@email.com')
+    assert auth.User.exists(username='myuser', email='some@other.com')
+    assert auth.User.exists(username='none', email='valid@email.com')
+    assert not auth.User.exists(username='none')
+    assert not auth.User.exists(email='some@other.com')
+
+@raises(TypeError)
+def test_user_exists_with_no_args():
+    auth.User.exists()
+
+def test_login_form():
+    login_form = authforms.login_form()
+    assert isinstance(login_form, web.form.Form)
+
+def test_login_form_validates_username():
+    login_form = authforms.login_form()
+    # Feed it a really short username:
+    assert not login_form.username.validate('us')
+
+def test_login_password_nonempty():
+    login_form = authforms.login_form()
+    # Feed it an emtpy string
+    assert not login_form.password.validate('')
+
+def test_login_min_pwd_length():
+    login_form = authforms.login_form()
+    assert not login_form.password.validate('pas')
+    assert login_form.password.validate('pass')
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_login_with_real_account():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.password = 'abc123'
+    user.create()
+    login_form = authforms.login_form()
+    assert not login_form.validates(web.storify({
+        'username': 'myuser',
+        'password': 'abc123',
+    }))
+    user.activate()
+    user.store()
+    assert login_form.validates(web.storify({
+        'username': 'myuser',
+        'password': 'abc123',
+    })), login_form.note
+    assert not login_form.validates(web.storify({
+        'username': 'myuser',
+        'password': 'wrong password',
+    }))
+    assert not login_form.validates(web.storify({
+        'username': 'wrong',
+        'password': 'abc123',
+    }))
+
+def test_registration_form():
+    reg_form = authforms.register_form()
+    assert isinstance(reg_form, web.form.Form)
+
+def test_registration_email_validation():
+    reg_form = authforms.register_form()
+    reg_from = authforms.register_form()
+    assert reg_form.email.validate('valid@email.com')
+    for e in invalid_emails:
+        yield check_reg_invalid_emails, e
+
+def check_reg_invalid_emails(email):
+    reg_form = authforms.register_form()
+    assert not reg_form.email.validate(email)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_registration_pw_confirmation():
+    reg_form = authforms.register_form()
+    assert reg_form.validates(web.storify({
+        'username': 'myuser',
+        'email': 'valid@email.com',
+        'password': 'abc123',
+        'confirm': 'abc123'
+    })), reg_form.note
+    assert not reg_form.validates(web.storify({
+        'username': 'myuser',
+        'email': 'valid@email.com',
+        'password': 'abc123',
+        'confirm': 'wont repeat'
+    }))
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_registration_fails_if_user_exists():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    reg_form = authforms.register_form()
+    assert not reg_form.validates(web.storify({
+        'username': 'myuser',
+        'email': 'valid@email.com',
+        'password': 'abc123',
+        'confirm': 'abc123',
+    }))
+    assert not reg_form.validates(web.storify({
+        'username': 'otheruser',
+        'email': 'valid@email.com', # still the same e-mail
+        'password': 'abc123',
+        'confirm': 'abc123',
+    }))
+    assert not reg_form.validates(web.storify({
+        'username': 'myuser',
+        'email': 'other@email.com',
+        'password': 'abc123',
+        'confirm': 'abc123',
+    }))
+
+def test_reset_form():
+    reset_form = authforms.pw_reset_form()
+    assert isinstance(reset_form, web.form.Form)
+
+def test_set_new_password():
+    reset_form = authforms.pw_reset_form()
+    assert reset_form.validates(web.storify({
+        'password': 'abc123',
+        'new': '123abc',
+        'confirm': '123abc'
+    }))
+
+def test_wrong_new_password():
+    reset_form = authforms.pw_reset_form()
+    assert not reset_form.validates(web.storify({
+        'password': 'abc123',
+        'new': '123abc',
+        'confirm': '123123'
+    }))
+
+def test_email_request_form():
+    email_form = authforms.email_request_form()
+    assert isinstance(email_form, web.form.Form)
+
+@with_setup(setup=setup_table, teardown=teardown_table)
+def test_email_belongs_to_account_validation():
+    user = auth.User(username='myuser', email='valid@email.com')
+    user.create()
+    email_form = authforms.email_request_form()
+    assert email_form.validates(web.storify({
+        'email': user.email,
+    })), email_form.note
+    assert not email_form.validates(web.storify({
+        'email': 'some@other.com',
+    }))
