@@ -247,31 +247,32 @@ class reset_password:
 
 
 class unregister:
+    def __init__(self):
+        self.f = authforms.login_form()
+
     def GET(self, done):
         if done:
             content = render.unregister_success()
             return render.base_clean(content)
         if not web.ctx.session.user:
-            content = render.cannot_unregister()
-            return render.base_clean(content)
-        self.f = login_form()
+            return self.render_cannot_unregister()
         return self.render_unregister_page()
 
     def POST(self, done):
         if done: return
-
-        self.f = login_form()
+        if not web.ctx.session.user:
+            return self.render_cannot_unregister()
         if not self.f.validates():
             return self.render_unregister_page()
-        if not web.ctx.session.user:
-            self.f.note = 'You are not logged in. Please <a href="/login">log in</a> first.'
-            return self.render_unregister_page()
-        if not web.ctx.session.user.authenticate(self.f.d.password):
-            self.f.note = 'You identity could not be confirmed. Please check your username and password, and try again.'
-            return self.render_unregister_page()
+        # User was authenticated by form validator, so we can remove the
+        # account safely sending a confirmation e-mail.
         User.delete(username=web.ctx.session.user.username,
                     message=render.delete_confirmation().__unicode__())
         raise web.seeother('/unregister/done')
+
+    def render_cannot_unregister(self):
+        content = render.cannot_unregister()
+        return render.base_clean(content)
 
     def render_unregister_page(self):
         content = render.unregister_page(self.f)
