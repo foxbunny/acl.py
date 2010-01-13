@@ -118,6 +118,12 @@ migrations = {
         ALTER TABLE debates
             ALTER COLUMN username SET NOT NULL;
     """,
+    14.0: """
+        ALTER TABLE debates
+            DROP COLUMN author_id;
+        ALTER TABLE arguments
+            DROP COLUMN author_id;
+    """,
 }
 
 

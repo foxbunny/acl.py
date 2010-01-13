@@ -113,7 +113,6 @@ class new_debate:
                              title=self.f.d.title,
                              slug=slugize(self.f.d.title),
                              topic=self.f.d.topic,
-                             author_id=web.ctx.session.user.id,
                              username=web.ctx.session.user.username)
         web.seeother('/debates/%s' % slugize(self.f.d.title))
 
