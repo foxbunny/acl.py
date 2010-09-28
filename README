@@ -1,23 +1,20 @@
-================================================================
-authentication.py: user authentication and management for web.py
-================================================================
+# authentication.py: user authentication and management for web.py
 
 The goal of this project is to provide a ready-to-use microframework for
 creating and managing users, secure storage of authentication data, and
-permission management for your `web.py <http://www.webpy.org/>`_ site.
+permission management for your [web.py](http://www.webpy.org/) site.
 
-Dependencies
-============
+## Dependencies
 
-* web.py (obviously)
-* nose (for running tests only)
+* [web.py](http://www.webpy.org/) (obviously)
+* [nose](http://code.google.com/p/python-nose/) (for running tests only)
+* [sqlite3](http://www.sqlite.org/) (for running tests only)
 
-Project status
-==============
+## Project status
 
-This project is currently in heavy development. Most facilities either don't
+This project is currently under heavy development. Most facilities either don't
 work, or are not even designed yet. We have scheduled the release of 0.1 with
-fully functional user management during January. Here is the brief roadmap:
+fully functional user management during October 2010. Here is the brief roadmap:
 
 * v0.1 (Oct 2010): fully functional user management
 * v0.2 (n/a): fully functional permissions management
@@ -36,12 +33,11 @@ it at this time. Therefore, I will not integrate the example into the master or
 release branches. The README file, and the tests should be sufficient to cover 
 the usage.
 
-Before using authentication.py
-==============================
+## Before using authentication.py
 
 The first thing you need to do is tell authentication.py which database it will
 be using. To do this, add ``authdb`` key to ``web.config``. Here's an example
-using PostgreSQL::
+using PostgreSQL:
 
    import web
    somedb = web.database(dbn='postgres', db='my_app_db', user='postgres')
@@ -52,7 +48,7 @@ to use a common authentication database between different apps). Just assign
 wahtever database you want to use to ``web.config.authdb``.
 
 If you want to take advantage of messaging facilities, you also need to define
-a ``web.config.authmail`` key, and assign it a dictionary of options::
+a ``web.config.authmail`` key, and assign it a dictionary of options:
 
    import web
    web.config.authmail = {'sender': 'default.sender@yoursite.com',
@@ -63,23 +59,24 @@ a ``web.config.authmail`` key, and assign it a dictionary of options::
 
 Defaults for the subject messages are:
 
-* ``activation_subject``: *Account activation*
-* ``reset_subject``: *Password reset*
-* ``delete_subject``: *Account removed*
-* ``suspend_subject``: *Account suspended*
+* ``activation_subject``: _Account activation_
+* ``reset_subject``: _Password reset_
+* ``delete_subject``: _Account removed_
+* ``suspend_subject``: _Account suspended_
 
 If you are happy with these defaults, you don't have to include them in the
 configuration dictionary. Sender is still required.
 
-User object
-===========
+## User object
 
-Creating a new user
--------------------
+``User`` object is the key component of the ``auth`` module. It has both
+class methods and instance methods that facilitate its functionality.
+
+### Creating a new user
 
 To create a user, you can use the ``User`` class from the
 ``authenticationpy.auth`` module. Before actually creating a user, you need to
-specify the three required properties::
+specify the three required properties:
 
    >>> from authenticationpy.auth import User
    >>> user = User(username='myuser'
@@ -90,11 +87,10 @@ specify the three required properties::
 A user account is not atomatically activated after creation. The ``activate``
 method must be called on the instance at some point to activate it.
 
-Creating a user with activation e-mail
---------------------------------------
+### Creating a user with activation e-mail
 
 If you want to send out an activation e-mail, you can do so by specifying the
-activation message::
+activation message:
 
    >>> from authenticationpy.auth import User
    >>> user = User(username="myuser",
@@ -119,12 +115,11 @@ retrieved later. If you want to send activation e-mails more than once, do not
 include the password in your template. If the clear-text password is lost, the
 template variable will be replaced with an empty string.
 
-Setting activation information and obtaining the action code
-------------------------------------------------------------
+### Setting activation information and obtaining the action code
 
 If you have your own system for notifying users about activation, and then
 requesting activation action, you can use the ``set_activation`` method to set
-the user account to an 'activatable' state. Here's an example::
+the user account to an _activatable_ state. Here's an example:
 
    >>> from authenticationpy.auth import User
    >>> user = User(username='myuser',
@@ -137,21 +132,19 @@ In the above example, the ``code`` variable is assigned an activation code that
 is generated by the ``set_activation`` method. This code is the same one used
 for the activation URL, and it's a SHA-256 hexdigest.
 
-Finding a user account by activation code
------------------------------------------
+### Finding a user account by activation code
 
 This does not strictly apply to activation. It also applies to all cases where
 you may be using the action code (such as account removal confirmation, or
 password reset). To get a user account by action (activation) code, you can use
-the ``get_user_by_act_code`` class method. Here is an example::
+the ``get_user_by_act_code`` class method. Here is an example:
 
    >>> from authenticationpy.auth import User
    >>> code = some_code # a SHA-256 hexdigest
    >>> user = User.get_user_by_act_code(code)
    # do something with the user account
 
-Testing the timeliness of user action
--------------------------------------
+### Testing the timeliness of user action
 
 Once a user clicks on the activation link (in fact, this applies to all cases
 where you are using the action code for confirming user action), you know the
@@ -161,7 +154,7 @@ other action that was confirmed. However, if you do impose deadlines, there is
 a convenience method that you can use to test if user action was timely.
 
 To test the timeliness of user actions, you can call the
-``is_interaction_timely`` method on any ``User`` instance. ::
+``is_interaction_timely`` method on any ``User`` instance.
 
    >>> import datetime
    >>> from authenticationpy.auth import User
@@ -173,7 +166,7 @@ To test the timeliness of user actions, you can call the
 
 This method requires two arguments:
 
-* ``type``: must be 'a' (activation), 'd' (delete), or 'r' (reset password)
+* ``type``: must be ``'a'`` (activation), ``'d'`` (delete), or ``'r'`` (reset password)
 * ``deadline``: action deadline in seconds
 
 It returns a boolean value of the success status.
@@ -186,7 +179,7 @@ Clearing user action data
 
 Once user action was confirmed, it is no longer necessary to keep interaction
 data in the database. To clear the data, you can use the ``clear_interaction``
-instance method. ::
+instance method.
 
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
@@ -201,7 +194,7 @@ Activating a user account
 
 Calling ``activate`` on User instance activates it. Although it is activated
 in-memory, it is not saved as activated, so you need to store changes before a
-user can log in. ::
+user can log in.
 
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
@@ -212,7 +205,7 @@ Creating a user with activation
 -------------------------------
 
 You can both create and activate a user account at the same time. To do that,
-you can pass the ``activated`` argument to the ``create`` method::
+you can pass the ``activated`` argument to the ``create`` method:
 
    >>> from authenticationpy.auth import User
    >>> user = User(username='myuser',
@@ -237,11 +230,10 @@ To get the user record, you can call the ``get_user`` class method::
 You can use either the username or the e-mail address as an argument for the
 ``get_user`` method.
 
-Authenticating the user
------------------------
+### Authenticating the user
 
 To check the user password (to authenticate it), you must call the
-``authenticate`` method on the user object::
+``authenticate`` method on the user object:
 
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
@@ -250,11 +242,10 @@ To check the user password (to authenticate it), you must call the
 
 The method returns True or False depending on whether authentication was
 successful. Note that due to web.py's session handling, authentication.py will
-*not* automatically assign users to a session. It is your responsibility to do
+_not_ automatically assign users to a session. It is your responsibility to do
 so.
 
-Password length constraints
----------------------------
+### Password length constraints
 
 Default password minimum length is 4 characters. If you want your users to use
 a longer minimum length password (or shorter), you can customize the minimum
@@ -264,8 +255,7 @@ the password you are trying to set is shorter than minimum length,
 0-length. Even if you set ``web.config.min_pwd_length`` to 0, 0-length
 passwords are not allowed. The absolute minimum allowed password length is 1.
 
-Resetting the password
-----------------------
+### Resetting the password
 
 You can reset the user password in two ways. You can simply assign a new
 clear-text password to the password property or you can call the
@@ -279,7 +269,7 @@ Here is an example using the property method::
    >>> user.password = 'new password'
    >>> user.store()
 
-And the ``reset_password`` method::
+And here is an example with the ``reset_password`` method::
 
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
@@ -303,8 +293,7 @@ you want to simply notify your user, rather than request an action, you can
 pass the ``confirmation`` argument with the value of ``False`` and omit the URL
 from URL from your message.
 
-Confirming password resets
---------------------------
+### Confirming password resets
 
 If you have decided to delay confirmation and send out a confirmation e-mail
 when using ``password_reset`` method, you need to explicitly assign the new
@@ -319,11 +308,10 @@ password, you can call ``confirm_password``.
 
 As you can see, you have to call ``store`` to make the changes permanent.
 
-Sending e-mails to a user
--------------------------
+### Sending e-mails to a user
 
 Arbitrary e-mail messages can be sent to users using the ``send_email`` method.
-Here's a simple example::
+Here's a simple example:
 
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
@@ -331,7 +319,7 @@ Here's a simple example::
 
 As will all other e-mail facilities, you can add template variables to the
 e-mail message, but for regular e-mail, you can use any template variables you
-like. Just pass any variable as a keyword argument::
+like. Just pass any variable as a keyword argument:
 
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
@@ -339,16 +327,15 @@ like. Just pass any variable as a keyword argument::
    ...                 greeting="Hello,",
    ...                 username=user.username)
 
-Deleting a user
----------------
+### Deleting a user
 
 To delete a user (i.e, permanently remove its records), you can use the
-``delete`` class method::
+``delete`` class method:
 
    >>> from authenticationpy.auth import User
    >>> User.delete(username='myuser')
 
-You can also send out a notification or confirmation e-mail::
+You can also send out a notification or confirmation e-mail:
 
    >>> from authenticationpy.auth import User
    >>> User.delete(username='myuser',
@@ -366,8 +353,7 @@ Available e-mail message template variables are::
 * ``$username``: username
 * ``$email``: the user's e-mail address
 
-Confirming user account removal
--------------------------------
+### Confirming user account removal
 
 If you have used the confirmation e-mail functionality when deleting a user
 account, you need to explcitly confirm account removal. You can do that by
@@ -376,13 +362,12 @@ using the ``confirm_delete`` class method::
    >>> from authenticationpy.auth import User
    >>> User.confirm_delete(username='myuser')
 
-Suspending an account
----------------------
+### Suspending an account
 
-Users account can be deleted, and it's gone forever. If you only want to
+User account can be deleted, and it's gone forever. If you only want to
 disable authentication for a particular account, you can suspend it instead of
 deleting it. To do this, just use the ``suspend`` class method. It is an e-mail
-method, like some of the other methods. ::
+method, like some of the other methods.
 
    >>> from authenticationpy.auth import User
    >>> User.suspend(username='myuser',
@@ -407,14 +392,13 @@ You can also suspend an account by simply deactivating it::
 Trying to authenticate using a suspended account will result in a
 ``UserAccountError`` exception.
 
-Updating user details
----------------------
+### Updating user details
 
 Updating properties for a user is as simple as assigning new values to them.
 Some validation occurs behind the scene (e.g, creating the encrypted version of
 the password), but most of the time you don't need to worry about that. Once
 you've assigned new properties for the user, you have to call the ``store``
-method to write changes to the database. ::
+method to write changes to the database.
 
    >>> from authenticationpy.auth import User
    >>> user = User.get_user(username='myuser')
