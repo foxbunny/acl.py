@@ -20,6 +20,10 @@ fully functional user management during October 2010. Here is the brief roadmap:
 * v0.2 (n/a): fully functional permissions management
 * v0.3 (n/a): fully functional group management
 
+Keep track of issues in the 
+[issue tracker](http://github.com/foxbunny/authentication.py/issues) to stay on 
+top of the changes that will end up in the releases.
+
 Each of the version will add one module to the project. User management is in
 the ``auth`` module, which is curretly being worked on. Permissions management
 will be pu in ``perm`` module, and groups will reside in ``group`` module.
