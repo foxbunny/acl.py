@@ -19,13 +19,22 @@ This project is currently in heavy development. Most facilities either don't
 work, or are not even designed yet. We have scheduled the release of 0.1 with
 fully functional user management during January. Here is the brief roadmap:
 
-* v0.1 (Jan 2010): fully functional user management
-* v0.2 (Feb 2010): fully functional permissions management
-* v0.3 (Feb 2010): fully functional group management
+* v0.1 (Oct 2010): fully functional user management
+* v0.2 (n/a): fully functional permissions management
+* v0.3 (n/a): fully functional group management
 
 Each of the version will add one module to the project. User management is in
 the ``auth`` module, which is curretly being worked on. Permissions management
 will be pu in ``perm`` module, and groups will reside in ``group`` module.
+
+The project is definitely not dead. It was put on ice a year ago, but I've 
+started developing web apps again, so this project has become relevant again.
+
+Expect updates soon. The v0.1 release is expected in the following weeks. The
+first release will _not_ include the example app, as I have no time to work on
+it at this time. Therefore, I will not integrate the example into the master or
+release branches. The README file, and the tests should be sufficient to cover 
+the usage.
 
 Before using authentication.py
 ==============================
